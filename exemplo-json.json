@@ -1,0 +1,30 @@
+{
+    "profissional": {
+        "identificacao": {
+            "nome": "André",
+            "idade": 30,
+            "email": "abc@gmail.com",
+            "telefone": 123456789,
+            "cpf": 123456789
+        },
+        "endereco": {
+            "logradouro": "Av: 1 de abril",
+            "numero": 123,
+            "complemento": "AP 123",
+            "pontoReferencia": "Cooper supermercado",
+            "cep": 123456,
+            "cidade": "Blumenau",
+            "estado": "sc"
+        },
+        "gamesPreferidos": [{
+            "name": "Diablo",
+            "plataforma": "PC",
+            "tipo": "RPG",
+            "estudio": "Blizzards"
+        }],
+        "skils": [{
+            "descricao": "Java",
+            "nivelConhecimento": 4
+        }]
+    }
+}
