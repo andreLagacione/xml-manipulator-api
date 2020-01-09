@@ -1,14 +1,6 @@
-package com.example.xmlmanipulatorapi.document.model;
+package com.example.xmlmanipulatorapi.document;
 
-import javax.persistence.Id;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "document")
 public class Document {
-
-    @Id
-    private String id;
-
 
 
 }
