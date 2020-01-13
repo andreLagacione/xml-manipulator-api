@@ -1,3 +1,7 @@
 Toda classe tem que ser anotada com o paramêtro @XmlRootElement(name = "infDoc"), caso a mesma será parte do XML, cada propriedade dessa classe que será parte do XML
 será anotada com o parâmetro @XmlElement(name = "DT"). Caso essa clase for fazer parte do XML também ela terá que ser anotada com o parâmetro @XmlAccessorType(XmlAccessType.FIELD).
 
+Passos
+1 - Construir um upload para o arquivo XML
+2 - Converter esse XML em objeto e salvar no mongo
+3 - Usar o XMLMapper
