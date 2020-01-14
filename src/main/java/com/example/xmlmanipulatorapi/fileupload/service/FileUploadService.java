@@ -1,15 +1,13 @@
 package com.example.xmlmanipulatorapi.fileupload.service;
 
 import com.example.xmlmanipulatorapi.commons.exceptions.ObjectNotFoundException;
-import com.example.xmlmanipulatorapi.document.Document;
+import com.example.xmlmanipulatorapi.document.model.ProcEventoCte;
 import com.example.xmlmanipulatorapi.fileupload.repository.FileUploadRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @Service
 public class FileUploadService {
@@ -30,7 +28,7 @@ public class FileUploadService {
         try {
             byte[] bytes = file.getBytes();
             XmlMapper xmlMapper = new XmlMapper();
-            Document document = xmlMapper.readValue(bytes, Document.class);
+            ProcEventoCte document = xmlMapper.readValue(bytes, ProcEventoCte.class);
             ObjectMapper objectMapper = new ObjectMapper();
             String json = objectMapper.writeValueAsString(document);
 
