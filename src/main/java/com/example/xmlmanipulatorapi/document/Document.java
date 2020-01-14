@@ -1,6 +1,6 @@
 package com.example.xmlmanipulatorapi.document;
 
-import com.example.xmlmanipulatorapi.model.*;
+import com.example.xmlmanipulatorapi.document.model.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

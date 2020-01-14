@@ -1,4 +1,4 @@
-package com.example.xmlmanipulatorapi.model;
+package com.example.xmlmanipulatorapi.document.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
