@@ -1,4 +1,4 @@
-package com.lagacione.faculdademarotinhaapi.commons.models;
+package com.example.xmlmanipulatorapi.commons.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,4 +15,5 @@ public class PadraoMensagemRetornoDTO {
     private HttpStatus httpStatus;
     private Integer httpStatusCode;
     private String message;
+
 }
