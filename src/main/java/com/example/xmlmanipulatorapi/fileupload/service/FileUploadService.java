@@ -2,8 +2,10 @@ package com.example.xmlmanipulatorapi.fileupload.service;
 
 import com.example.xmlmanipulatorapi.commons.exceptions.ObjectNotFoundException;
 import com.example.xmlmanipulatorapi.document.Document;
+import com.example.xmlmanipulatorapi.fileupload.repository.FileUploadRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +13,13 @@ import java.io.IOException;
 
 @Service
 public class FileUploadService {
+
+    private final FileUploadRepository fileUploadRepository;
+
+    @Autowired
+    public FileUploadService(FileUploadRepository fileUploadRepository) {
+        this.fileUploadRepository = fileUploadRepository;
+    }
 
     public void readFile(MultipartFile file) throws Exception {
 
