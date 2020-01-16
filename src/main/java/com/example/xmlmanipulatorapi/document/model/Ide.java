@@ -1,76 +1,102 @@
 package com.example.xmlmanipulatorapi.document.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@XmlRootElement(name = "ide")
 public class Ide {
 
-    @XmlElement(name = "cUF")
+    @JsonProperty("cUF")
     private Integer cUF;
-    @XmlElement(name = "cCT")
+
+    @JsonProperty("cCT")
     private Integer cCT;
-    @XmlElement(name = "CFOP")
+
+    @JsonProperty("CFOP")
     private Integer CFOP;
-    @XmlElement(name = "natOp")
+
+    @JsonProperty("natOp")
     private String natOp;
-    @XmlElement(name = "mod")
+
+    @JsonProperty("mod")
     private Integer mod;
-    @XmlElement(name = "serie")
+
+    @JsonProperty("serie")
     private Integer serie;
-    @XmlElement(name = "nCT")
+
+    @JsonProperty("nCT")
     private Integer nCT;
-    @XmlElement(name = "dhEmi")
+
+    @JsonProperty("dhEmi")
     private Date dhEmi;
-    @XmlElement(name = "tpImp")
+
+    @JsonProperty("tpImp")
     private Integer tpImp;
-    @XmlElement(name = "tpEmis")
+
+    @JsonProperty("tpEmis")
     private Integer tpEmis;
-    @XmlElement(name = "cDV")
+
+    @JsonProperty("cDV")
     private Integer cDV;
-    @XmlElement(name = "tpAmb")
+
+    @JsonProperty("tpAmb")
     private Integer tpAmb;
-    @XmlElement(name = "tpCTe")
+
+    @JsonProperty("tpCTe")
     private Integer tpCTe;
-    @XmlElement(name = "procEmi")
+
+    @JsonProperty("procEmi")
     private Integer procEmi;
-    @XmlElement(name = "verProc")
+
+    @JsonProperty("verProc")
     private Integer verProc;
-    @XmlElement(name = "cMunEnv")
+
+    @JsonProperty("cMunEnv")
     private Integer cMunEnv;
-    @XmlElement(name = "xMunEnv")
+
+    @JsonProperty("xMunEnv")
     private String xMunEnv;
-    @XmlElement(name = "UFEnv")
+
+    @JsonProperty("UFEnv")
     private String UFEnv;
-    @XmlElement(name = "modal")
+
+    @JsonProperty("modal")
     private Integer modal;
-    @XmlElement(name = "tpServ")
+
+    @JsonProperty("tpServ")
     private Integer tpServ;
-    @XmlElement(name = "cMunIni")
+
+    @JsonProperty("cMunIni")
     private Integer cMunIni;
-    @XmlElement(name = "xMunIni")
+
+    @JsonProperty("xMunIni")
     private String xMunIni;
-    @XmlElement(name = "UFIni")
+
+    @JsonProperty("UFIni")
     private String UFIni;
-    @XmlElement(name = "cMunFim")
+
+    @JsonProperty("cMunFim")
     private Integer cMunFim;
-    @XmlElement(name = "xMunFim")
+
+    @JsonProperty("xMunFim")
     private String xMunFim;
-    @XmlElement(name = "UFFim")
+
+    @JsonProperty("UFFim")
     private String UFFim;
-    @XmlElement(name = "retira")
+
+    @JsonProperty("retira")
     private Integer retira;
-    @XmlElement(name = "indIEToma")
+
+    @JsonProperty("indIEToma")
     private Integer indIEToma;
-    @XmlElement(name = "toma3")
+
+    @JsonProperty("toma3")
     private Toma3 toma3;
 
 }

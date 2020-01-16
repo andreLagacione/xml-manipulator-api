@@ -1,37 +1,45 @@
 package com.example.xmlmanipulatorapi.document.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 @Getter
 @Setter
 @NoArgsConstructor
-@XmlRootElement(name = "infCte")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InfCte {
 
-    @XmlElement(name = "ide")
+    @JsonProperty("ide")
     private Ide ide;
-    @XmlElement(name = "compl")
+
+    @JsonProperty("compl")
     private Compl compl;
-    @XmlElement(name = "emit")
+
+    @JsonProperty("emit")
     private Emit emit;
-    @XmlElement(name = "rem")
+
+    @JsonProperty("rem")
     private Rem rem;
-    @XmlElement(name = "dest")
+
+    @JsonProperty("dest")
     private Dest dest;
-    @XmlElement(name = "vPrest")
+
+    @JsonProperty("vPrest")
     private VPrest vPrest;
-    @XmlElement(name = "imp")
+
+    @JsonProperty("imp")
     private Imp imp;
-    @XmlElement(name = "infCTeNorm")
+
+    @JsonProperty("infCTeNorm")
     private InfCTeNorm infCTeNorm;
-    @XmlElement(name = "autXML")
+
+    @JsonProperty("autXML")
     private AutXML autXML;
-    @XmlElement(name = "infRespTec")
+
+    @JsonProperty("infRespTec")
     private InfRespTec infRespTec;
 
 }

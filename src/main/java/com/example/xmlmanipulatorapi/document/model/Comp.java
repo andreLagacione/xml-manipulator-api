@@ -1,5 +1,7 @@
 package com.example.xmlmanipulatorapi.document.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,12 +12,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Getter
 @Setter
 @NoArgsConstructor
-@XmlRootElement(name = "Comp")
 public class Comp {
 
-    @XmlElement(name = "xNome")
+    @JsonProperty("xNome")
     private String xNome;
-    @XmlElement(name = "vComp")
+
+    @JsonProperty("vComp")
     private Double vComp;
 
 }

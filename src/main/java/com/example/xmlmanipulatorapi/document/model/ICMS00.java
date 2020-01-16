@@ -1,25 +1,25 @@
 package com.example.xmlmanipulatorapi.document.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 @Getter
 @Setter
 @NoArgsConstructor
-@XmlRootElement(name = "ICMS00")
 public class ICMS00 {
 
-    @XmlElement(name = "CST")
+    @JsonProperty("CST")
     private Double CST;
-    @XmlElement(name = "vBC")
+
+    @JsonProperty("vBC")
     private Double vBC;
-    @XmlElement(name = "pICMS")
+
+    @JsonProperty("pICMS")
     private Double pICMS;
-    @XmlElement(name = "vICMS")
+
+    @JsonProperty("vICMS")
     private Double vICMS;
 
 }

@@ -41,7 +41,7 @@
                 <ObsCont xCampo="Capa">
                     <xTexto>78545</xTexto>
                 </ObsCont>
-                <ObsCont xCampo="Mapa">
+                <!-- <ObsCont xCampo="Mapa">
                     <xTexto>745878</xTexto>
                 </ObsCont>
                 <ObsCont xCampo="VBZ">
@@ -58,7 +58,7 @@
                 </ObsCont>
                 <ObsCont xCampo="Placa">
                     <xTexto>REC0001</xTexto>
-                </ObsCont>
+                </ObsCont> -->
             </compl>
             <emit>
                 <CNPJ>02913489000541</CNPJ>

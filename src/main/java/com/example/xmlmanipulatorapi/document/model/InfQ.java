@@ -1,23 +1,22 @@
 package com.example.xmlmanipulatorapi.document.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 @Getter
 @Setter
 @NoArgsConstructor
-@XmlRootElement(name = "infQ")
 public class InfQ {
 
-    @XmlElement(name = "cUnid")
+    @JsonProperty("cUnid")
     private Double cUnid;
-    @XmlElement(name = "tpMed")
+
+    @JsonProperty("tpMed")
     private String tpMed;
-    @XmlElement(name = "qCarga")
+
+    @JsonProperty("qCarga")
     private Double qCarga;
 
 }
