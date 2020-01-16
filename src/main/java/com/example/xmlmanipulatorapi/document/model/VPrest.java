@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +19,6 @@ public class VPrest {
     private Double vRec;
 
     @JsonProperty("Comp")
-    private List<Comp> Comp;
+    private Comp Comp;
 
 }
