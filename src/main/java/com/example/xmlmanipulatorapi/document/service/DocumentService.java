@@ -35,8 +35,8 @@ public class FileUploadService {
             CteProc document = xmlMapper.readValue(readContent, CteProc.class);
             System.out.println("File: " + document);
 
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            String json = objectMapper.writeValueAsString(document);
+            this.fileUploadRepository.insert(document);
+
 
         } catch (Exception e) {
             throw new Exception("Erro ao processar o arquivo.", e.getCause());
