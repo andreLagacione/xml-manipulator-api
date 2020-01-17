@@ -41,24 +41,6 @@
                 <ObsCont xCampo="Capa">
                     <xTexto>78545</xTexto>
                 </ObsCont>
-                <!-- <ObsCont xCampo="Mapa">
-                    <xTexto>745878</xTexto>
-                </ObsCont>
-                <ObsCont xCampo="VBZ">
-                    <xTexto>0</xTexto>
-                </ObsCont>
-                <ObsCont xCampo="tpGeracaoCTe">
-                    <xTexto>N</xTexto>
-                </ObsCont>
-                <ObsCont xCampo="CTe Origem">
-                    <xTexto>PROMAX</xTexto>
-                </ObsCont>
-                <ObsCont xCampo="indTpEntrega">
-                    <xTexto>1</xTexto>
-                </ObsCont>
-                <ObsCont xCampo="Placa">
-                    <xTexto>REC0001</xTexto>
-                </ObsCont> -->
             </compl>
             <emit>
                 <CNPJ>02913489000541</CNPJ>
@@ -116,10 +98,6 @@
                     <xNome>FRETE VALOR</xNome>
                     <vComp>258.23</vComp>
                 </Comp>
-                <Comp>
-                    <xNome>VALOR DO ICMS</xNome>
-                    <vComp>35.21</vComp>
-                </Comp>
             </vPrest>
             <imp>
                 <ICMS>
@@ -173,7 +151,6 @@
                 <Reference URI="#CTe32200102913489000541570030018046101000000012">
                     <Transforms>
                         <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
-                        <Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
                     </Transforms>
                     <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
                     <DigestValue>OEhPYsph6/E81clHx/i4ufAHcvc=</DigestValue>
