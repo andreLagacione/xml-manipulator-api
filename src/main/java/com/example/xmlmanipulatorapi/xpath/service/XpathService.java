@@ -37,7 +37,7 @@ public class XpathService {
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(fileInputStream);
         XPath xPath = XPathFactory.newInstance().newXPath();
-        String expression = "/document/CTe";
+        String expression = "cteProc";
         NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
 
         System.out.println(nodeList);
