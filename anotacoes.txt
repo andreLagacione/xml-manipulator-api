@@ -6,6 +6,12 @@ Passos
 2 - Converter esse XML em objeto e salvar no mongo = OK
 3 - Usar o XMLMapper = OK
 4 - Buscar esses documentos e lista-los = OK
+
+=====================================================================
+=====================================================================
+
+A PARTIR DESSE PONTO É DIFERENTE DO QUE JÁ TEM FEITO, É UMA FUNCIONALIDADE A PARTE
+
 5 - Adicionar ou remover uma tag do XML
 6 - Alterar um valor de alguma tag e tbm da tag criada, para isso precisa usar o Xpath, o mesmo pega o XML enviado e passa para string, e mapeia os nós desses XML, através desse mapeamento
     adicionar ou remover a tag no local desejado.
