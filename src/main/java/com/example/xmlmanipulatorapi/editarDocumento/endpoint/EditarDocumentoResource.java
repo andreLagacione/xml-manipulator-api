@@ -20,8 +20,8 @@ public class EditarDocumentoResource {
     }
 
     @PostMapping
-    public void uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
-        this.editarDocumentoService.processarDocumento(file);
+    public void uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("nomeTagCriada") String nomeTagCriada) throws Exception {
+        this.editarDocumentoService.processarDocumento(file, nomeTagCriada);
     }
 
 }

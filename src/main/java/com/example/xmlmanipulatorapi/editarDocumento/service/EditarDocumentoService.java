@@ -28,7 +28,7 @@ public class EditarDocumentoService {
         this.editarDocumentoRepository = editarDocumentoRepository;
     }
 
-    public void processarDocumento(MultipartFile file) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    public void processarDocumento(MultipartFile file, String nomeTagCriada) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
         String fileName = file.getOriginalFilename();
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -38,33 +38,10 @@ public class EditarDocumentoService {
         XPathFactory xpf = XPathFactory.newInstance();
         XPath xPath = xpf.newXPath();
 
-        Node nodes = (Node) xPath.evaluate("/cteProc", xml, XPathConstants.NODE);
+        NodeList nodes = (NodeList) xPath.evaluate("/cteProc/CTe/infCte/dest/enderDest", xml, XPathConstants.NODESET);
 
-//        for (int i = 0; i < nodes.getLength(); i++) {
-//            System.out.println("Node name: " + nodes.item(i).getNodeName() + " - " + "Node value: " + nodes.item(i).getNodeValue());
-//        }
-
-        NodeList childs = nodes.getChildNodes();
-
-        for (int n = childs.getLength() - 1; n >= 0; n--) {
-            Node child = childs.item(n);
-            short nodeType = child.getNodeType();
-            if (nodeType == Node.ELEMENT_NODE) {
-                System.out.println("Element node: " + child);
-            }
-            else if (nodeType == Node.TEXT_NODE) {
-                String trimmedNodeVal = child.getNodeValue().trim();
-                if (trimmedNodeVal.length() == 0){
-                    System.out.println("Node vazio");
-//                    nodes.removeChild(child);
-                }
-                else {
-                    System.out.println("Node value: " + trimmedNodeVal);
-                    child.setNodeValue(trimmedNodeVal);
-                }
-            } else if (nodeType == Node.COMMENT_NODE) {
-                nodes.removeChild(child);
-            }
+        for (int i = 0; i < nodes.getLength(); i++) {
+            System.out.println("Node name: " + nodes.item(i).getNodeName() + " - " + "Node value: " + nodes.item(i).getNodeValue());
         }
 
     }
