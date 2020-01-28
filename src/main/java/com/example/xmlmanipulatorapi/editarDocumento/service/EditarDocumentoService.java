@@ -1,6 +1,6 @@
-package com.example.xmlmanipulatorapi.xpath.service;
+package com.example.xmlmanipulatorapi.editarDocumento.service;
 
-import com.example.xmlmanipulatorapi.xpath.repository.XpathRepository;
+import com.example.xmlmanipulatorapi.editarDocumento.repository.XpathRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
