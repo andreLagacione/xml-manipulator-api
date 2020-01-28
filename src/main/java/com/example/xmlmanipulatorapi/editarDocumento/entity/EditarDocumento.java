@@ -1,4 +1,4 @@
-package com.example.xmlmanipulatorapi.xpath.entity;
+package com.example.xmlmanipulatorapi.editarDocumento.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.io.File;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "xpathDocument")
-public class Xpath {
+public class EditarDocumento {
 
     private File file;
 

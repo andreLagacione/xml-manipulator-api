@@ -1,6 +1,6 @@
 package com.example.xmlmanipulatorapi.editarDocumento.service;
 
-import com.example.xmlmanipulatorapi.editarDocumento.repository.XpathRepository;
+import com.example.xmlmanipulatorapi.editarDocumento.repository.EditarDocumentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,13 +19,13 @@ import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 
 @Service
-public class XpathService {
+public class EditarDocumentoService {
 
-    private final XpathRepository xpathRepository;
+    private final EditarDocumentoRepository editarDocumentoRepository;
 
     @Autowired
-    public XpathService(XpathRepository xpathRepository) {
-        this.xpathRepository = xpathRepository;
+    public EditarDocumentoService(EditarDocumentoRepository editarDocumentoRepository) {
+        this.editarDocumentoRepository = editarDocumentoRepository;
     }
 
     public void processarDocumento(MultipartFile file) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
