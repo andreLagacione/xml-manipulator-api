@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.transform.dom.DOMSource;
+
 @RestController
 @RequestMapping(value = "/editar-documento")
 public class EditarDocumentoResource {
@@ -20,8 +22,12 @@ public class EditarDocumentoResource {
     }
 
     @PostMapping
-    public void uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("nomeTagCriada") String nomeTagCriada) throws Exception {
-        this.editarDocumentoService.processarDocumento(file, nomeTagCriada);
+    public DOMSource saveDocumentEdited(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("nomeTagCriada") String nomeTagCriada,
+            @RequestParam("valorTagCriada") String valorTagCriada
+    ) throws Exception {
+        return this.editarDocumentoService.processarDocumento(file, nomeTagCriada, valorTagCriada);
     }
 
 }
