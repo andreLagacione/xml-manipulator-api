@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.xml.transform.dom.DOMSource;
+import java.io.File;
 
 @Getter
 @Setter
@@ -15,6 +15,6 @@ import javax.xml.transform.dom.DOMSource;
 @Document(collection = "xpathDocument")
 public class EditarDocumento {
 
-    private DOMSource file;
+    private File file;
 
 }
