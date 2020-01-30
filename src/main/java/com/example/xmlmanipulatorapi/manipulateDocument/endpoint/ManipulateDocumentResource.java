@@ -21,12 +21,23 @@ public class ManipulateDocumentResource {
 
     @PostMapping
     @RequestMapping(value = "/create")
-    public String saveDocumentEdited(
+    public String createDocumentEdited(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("nomeTagCriada") String nomeTagCriada,
-            @RequestParam("valorTagCriada") String valorTagCriada
+            @RequestParam("tagName") String tagName,
+            @RequestParam("tagValue") String tagValue
     ) throws Exception {
-        return this.manipulateDocumentService.processarDocumento(file, nomeTagCriada, valorTagCriada);
+        return this.manipulateDocumentService.processarDocumento(file, tagName, tagValue);
+    }
+
+    @PostMapping
+    @RequestMapping(value = "/edit")
+    public String saveDocumentEdited(
+            @RequestParam("jsonDocument") String jsonDocument,
+            @RequestParam("oldTagName") String oldTagName,
+            @RequestParam("newTagName") String newTagName,
+            @RequestParam("tagValue") String tagValue
+    ) throws Exception {
+        return this.manipulateDocumentService.saveDocumentEdited(jsonDocument, oldTagName, newTagName, tagValue);
     }
 
 }
