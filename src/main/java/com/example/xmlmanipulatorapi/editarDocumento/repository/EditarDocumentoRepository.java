@@ -7,5 +7,4 @@ import javax.xml.transform.dom.DOMSource;
 
 public interface EditarDocumentoRepository extends MongoRepository<EditarDocumento, Integer> {
 
-    void insert(DOMSource source);
 }
