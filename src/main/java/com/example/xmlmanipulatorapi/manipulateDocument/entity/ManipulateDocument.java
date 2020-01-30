@@ -1,4 +1,4 @@
-package com.example.xmlmanipulatorapi.editarDocumento.entity;
+package com.example.xmlmanipulatorapi.manipulateDocument.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "editedDocument")
-public class EditarDocumento {
+public class ManipulateDocument {
 
     private String editedDocument;
 

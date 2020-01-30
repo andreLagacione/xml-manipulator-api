@@ -1,7 +1,7 @@
-package com.example.xmlmanipulatorapi.editarDocumento.service;
+package com.example.xmlmanipulatorapi.manipulateDocument.service;
 
-import com.example.xmlmanipulatorapi.editarDocumento.entity.EditarDocumento;
-import com.example.xmlmanipulatorapi.editarDocumento.repository.EditarDocumentoRepository;
+import com.example.xmlmanipulatorapi.manipulateDocument.entity.ManipulateDocument;
+import com.example.xmlmanipulatorapi.manipulateDocument.repository.ManipulateDocumentRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -30,13 +30,13 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 @Service
-public class EditarDocumentoService {
+public class ManipulateDocumentService {
 
-    private final EditarDocumentoRepository editarDocumentoRepository;
+    private final ManipulateDocumentRepository manipulateDocumentRepository;
 
     @Autowired
-    public EditarDocumentoService(EditarDocumentoRepository editarDocumentoRepository) {
-        this.editarDocumentoRepository = editarDocumentoRepository;
+    public ManipulateDocumentService(ManipulateDocumentRepository manipulateDocumentRepository) {
+        this.manipulateDocumentRepository = manipulateDocumentRepository;
     }
 
     public String processarDocumento(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException {
@@ -60,8 +60,8 @@ public class EditarDocumentoService {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(node);
 
-        EditarDocumento editedDocument = new EditarDocumento(json);
-        this.editarDocumentoRepository.insert(editedDocument);
+        ManipulateDocument editedDocument = new ManipulateDocument(json);
+        this.manipulateDocumentRepository.insert(editedDocument);
 
 
         return json;

@@ -1,6 +1,6 @@
-package com.example.xmlmanipulatorapi.editarDocumento.endpoint;
+package com.example.xmlmanipulatorapi.manipulateDocument.endpoint;
 
-import com.example.xmlmanipulatorapi.editarDocumento.service.EditarDocumentoService;
+import com.example.xmlmanipulatorapi.manipulateDocument.service.ManipulateDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,17 +8,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.transform.dom.DOMSource;
-
 @RestController
 @RequestMapping(value = "/editar-documento")
-public class EditarDocumentoResource {
+public class ManipulateDocumentResource {
 
-    private final EditarDocumentoService editarDocumentoService;
+    private final ManipulateDocumentService manipulateDocumentService;
 
     @Autowired
-    public EditarDocumentoResource(EditarDocumentoService editarDocumentoService) {
-        this.editarDocumentoService = editarDocumentoService;
+    public ManipulateDocumentResource(ManipulateDocumentService manipulateDocumentService) {
+        this.manipulateDocumentService = manipulateDocumentService;
     }
 
     @PostMapping
@@ -27,7 +25,7 @@ public class EditarDocumentoResource {
             @RequestParam("nomeTagCriada") String nomeTagCriada,
             @RequestParam("valorTagCriada") String valorTagCriada
     ) throws Exception {
-        return this.editarDocumentoService.processarDocumento(file, nomeTagCriada, valorTagCriada);
+        return this.manipulateDocumentService.processarDocumento(file, nomeTagCriada, valorTagCriada);
     }
 
 }

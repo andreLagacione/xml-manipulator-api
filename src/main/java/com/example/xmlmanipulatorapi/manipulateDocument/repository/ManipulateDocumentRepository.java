@@ -1,10 +1,8 @@
-package com.example.xmlmanipulatorapi.editarDocumento.repository;
+package com.example.xmlmanipulatorapi.manipulateDocument.repository;
 
-import com.example.xmlmanipulatorapi.editarDocumento.entity.EditarDocumento;
+import com.example.xmlmanipulatorapi.manipulateDocument.entity.ManipulateDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import javax.xml.transform.dom.DOMSource;
-
-public interface EditarDocumentoRepository extends MongoRepository<EditarDocumento, Integer> {
+public interface ManipulateDocumentRepository extends MongoRepository<ManipulateDocument, Integer> {
 
 }
