@@ -22,7 +22,7 @@ public class EditarDocumentoResource {
     }
 
     @PostMapping
-    public DOMSource saveDocumentEdited(
+    public String saveDocumentEdited(
             @RequestParam("file") MultipartFile file,
             @RequestParam("nomeTagCriada") String nomeTagCriada,
             @RequestParam("valorTagCriada") String valorTagCriada
