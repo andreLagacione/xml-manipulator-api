@@ -68,10 +68,14 @@ public class ManipulateDocumentService {
     }
 
     private String convertStringXmlToStringJson(String xml) throws IOException {
-        XmlMapper xmlMapper = new XmlMapper();
-        JsonNode node = xmlMapper.readTree(xml.getBytes());
+        JsonNode node = this.convertStringXmlToJsonNode(xml);
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(node);
+    }
+
+    private JsonNode convertStringXmlToJsonNode(String xml) throws IOException {
+        XmlMapper xmlMapper = new XmlMapper();
+        return xmlMapper.readTree(xml.getBytes());
     }
 
     private Document adicionarNovaTag(Document xml, String nomeTagCriada, String valorTagCriada) throws XPathExpressionException {
@@ -104,6 +108,30 @@ public class ManipulateDocumentService {
         }
 
         return node;
+    }
+
+    public String saveDocumentEdited(String jsonDocument, String oldTagName, String newTagName, String tagValue) {
+        Boolean hasOldTag = oldTagName != null && oldTagName.isEmpty();
+        Boolean hasNewTag = newTagName != null && newTagName.isEmpty();
+        Boolean oldAndNewTagAreEquals = oldTagName.equalsIgnoreCase(newTagName);
+
+
+        if (hasOldTag) {
+            // a tag foi alterada ou removida, pra saber se foi alterada, tem que ter newTag e a new tem que ser diferente da old
+
+            if (hasNewTag && !oldAndNewTagAreEquals) {
+                // a tag foi alterada, buscar e remover a tag antiga, adicionar a nova e inserir o valor
+            } else {
+                // remover a tag
+            }
+        }
+    }
+
+    private JsonNode findNodeDestinatario(String jsonDocument) throws IOException {
+        JsonNode node = this.convertStringXmlToJsonNode(jsonDocument);
+        return node.path("CTe").path("infCte").path("dest");
+
+        // buscar a retornar o node de destinatario, para permitir se manipula-lo, removendo ou editando a tag conforme a regra
     }
 
 }
