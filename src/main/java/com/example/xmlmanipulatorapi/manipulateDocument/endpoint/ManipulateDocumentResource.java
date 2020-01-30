@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping(value = "/editar-documento")
+@RequestMapping(value = "/edited-document")
 public class ManipulateDocumentResource {
 
     private final ManipulateDocumentService manipulateDocumentService;
@@ -20,6 +20,7 @@ public class ManipulateDocumentResource {
     }
 
     @PostMapping
+    @RequestMapping(value = "/create")
     public String saveDocumentEdited(
             @RequestParam("file") MultipartFile file,
             @RequestParam("nomeTagCriada") String nomeTagCriada,
