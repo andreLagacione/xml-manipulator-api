@@ -39,34 +39,39 @@ public class ManipulateDocumentService {
         this.manipulateDocumentRepository = manipulateDocumentRepository;
     }
 
-    public String processarDocumento(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException {
-        String fileName = file.getOriginalFilename();
-
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document xml = db.parse(fileName);
-        xml = this.adicionarNovaTag(xml, nomeTagCriada, valorTagCriada);
-
-        DOMSource source = new DOMSource(xml);
-
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        StringWriter stringWriter = new StringWriter();
-        transformer.transform(source, new StreamResult(stringWriter));
-        String xmlString = stringWriter.getBuffer().toString();
-
-        XmlMapper xmlMapper = new XmlMapper();
-        JsonNode node = xmlMapper.readTree(xmlString.getBytes());
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(node);
+    public String processarDocumento(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws IOException, TransformerException, XPathExpressionException, SAXException, ParserConfigurationException {
+        Document xml = this.createDocument(file, nomeTagCriada, valorTagCriada);
+        String xmlString = this.convertDocumentToString(xml);
+        String json = this.convertStringXmlToStringJson(xmlString);
 
         ManipulateDocument editedDocument = new ManipulateDocument(json);
         this.manipulateDocumentRepository.insert(editedDocument);
 
-
         return json;
+    }
 
+    private Document createDocument(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+        String fileName = file.getOriginalFilename();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document xml = db.parse(fileName);
+        return this.adicionarNovaTag(xml, nomeTagCriada, valorTagCriada);
+    }
 
+    private String convertDocumentToString(Document xml) throws TransformerException {
+        DOMSource source = new DOMSource(xml);
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        StringWriter stringWriter = new StringWriter();
+        transformer.transform(source, new StreamResult(stringWriter));
+        return stringWriter.getBuffer().toString();
+    }
+
+    private String convertStringXmlToStringJson(String xml) throws IOException {
+        XmlMapper xmlMapper = new XmlMapper();
+        JsonNode node = xmlMapper.readTree(xml.getBytes());
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(node);
     }
 
     private Document adicionarNovaTag(Document xml, String nomeTagCriada, String valorTagCriada) throws XPathExpressionException {
