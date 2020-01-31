@@ -2,8 +2,12 @@ package com.example.xmlmanipulatorapi.manipulateDocument.service;
 
 import com.example.xmlmanipulatorapi.manipulateDocument.entity.ManipulateDocument;
 import com.example.xmlmanipulatorapi.manipulateDocument.repository.ManipulateDocumentRepository;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -110,28 +114,79 @@ public class ManipulateDocumentService {
         return node;
     }
 
-    public String saveDocumentEdited(String jsonDocument, String oldTagName, String newTagName, String tagValue) {
-        Boolean hasOldTag = oldTagName != null && oldTagName.isEmpty();
-        Boolean hasNewTag = newTagName != null && newTagName.isEmpty();
+    public String saveDocumentEdited(String jsonDocument, String oldTagName, String newTagName, String tagValue) throws IOException {
+        Boolean hasOldTag = oldTagName != null && !oldTagName.isEmpty();
+        Boolean hasNewTag = newTagName != null && !newTagName.isEmpty();
         Boolean oldAndNewTagAreEquals = oldTagName.equalsIgnoreCase(newTagName);
+        JsonNode destinatarioNode = this.findNodeDestinatario(jsonDocument);
 
 
         if (hasOldTag) {
-            // a tag foi alterada ou removida, pra saber se foi alterada, tem que ter newTag e a new tem que ser diferente da old
-
             if (hasNewTag && !oldAndNewTagAreEquals) {
-                // a tag foi alterada, buscar e remover a tag antiga, adicionar a nova e inserir o valor
+                destinatarioNode = this.updateTag(destinatarioNode, oldTagName, newTagName, tagValue);
             } else {
-                // remover a tag
+                destinatarioNode = this.removeNode(destinatarioNode, oldTagName);
             }
+
+            // atualizar a tag dest com os novos valores e o documento com a tag nova tag dest, converter pra XML String e devolver pro front
         }
+
+        return this.convertJsonNodeToString(destinatarioNode);
     }
 
     private JsonNode findNodeDestinatario(String jsonDocument) throws IOException {
-        JsonNode node = this.convertStringXmlToJsonNode(jsonDocument);
+        JsonNode node = this.convertJsonStringToJsonNode(jsonDocument);
         return node.path("CTe").path("infCte").path("dest");
+    }
 
-        // buscar a retornar o node de destinatario, para permitir se manipula-lo, removendo ou editando a tag conforme a regra
+    private JsonNode convertJsonStringToJsonNode(String jsonDocument) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory jsonFactory = mapper.getFactory();
+        JsonParser jsonParser = jsonFactory.createParser(jsonDocument);
+        return mapper.readTree(jsonParser);
+    }
+
+    private JsonNode updateTag(JsonNode destinatarioNode, String oldTagName, String newTagName, String tagValue) {
+        destinatarioNode = this.removeNode(destinatarioNode, oldTagName);
+        return this.setNewTag(destinatarioNode, newTagName, tagValue);
+    }
+
+    private JsonNode removeNode(JsonNode node, String oldTagName) {
+        ObjectNode objectNode = (ObjectNode) node;
+        objectNode.remove(oldTagName);
+        return (JsonNode) objectNode;
+    }
+
+    private JsonNode setNewTag(JsonNode node, String newTagName, String tagValue) {
+        ObjectNode objectNode = (ObjectNode) node;
+        objectNode.put(newTagName, tagValue);
+        return (JsonNode) objectNode;
+    }
+
+    // continuar a logica desse método
+    private String updateDocumentWithNewDest(String document, JsonNode newDest) throws IOException {
+        JsonNode node = this.convertStringXmlToJsonNode(document);
+        JsonNode infCteNode = node.path("CTe").path("infCte");
+        JsonNode cteNode = node.path("CTe");
+
+        infCteNode = this.removeNode(infCteNode, "dest");
+        cteNode = this.removeNode(cteNode, "infCte");
+
+        // fazer um metodo para abstrair esses dois casos
+        ObjectNode infCteObjectNode = (ObjectNode) infCteNode;
+        infCteObjectNode.set("dest", newDest);
+        infCteNode = (JsonNode) infCteObjectNode;
+
+        ObjectNode cteObjectNode = (ObjectNode) cteNode;
+        infCteObjectNode.set("infCte", infCteNode);
+        cteNode = (JsonNode) cteObjectNode;
+
+        // remover o CTe de node e adicionar o novo CTe, depois converter em estring e devolver para o método que chamou esse
+    }
+
+    private String convertJsonNodeToString(JsonNode node) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
     }
 
 }
