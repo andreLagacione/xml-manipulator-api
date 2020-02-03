@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.json.JSONObject;
+import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -129,8 +131,11 @@ public class ManipulateDocumentService {
             }
         }
 
-        // salvar esse json no Mongo e devolver pra tela o XML gerado
-        return this.updateDocumentWithNewDest(jsonDocument, destinatarioNode);
+        String newJsonDocument = this.updateDocumentWithNewDest(jsonDocument, destinatarioNode);
+        ManipulateDocument editedDocument = new ManipulateDocument(newJsonDocument);
+        this.manipulateDocumentRepository.insert(editedDocument);
+
+        return this.convertStringJsonToStringXml(newJsonDocument);
     }
 
     private JsonNode findNodeDestinatario(String jsonDocument) throws IOException {
@@ -186,6 +191,12 @@ public class ManipulateDocumentService {
         ObjectNode objectNode = (ObjectNode) nodeToUpdate;
         objectNode.set(nodeName, newNodeValue);
         return  (JsonNode) objectNode;
+    }
+
+    private String convertStringJsonToStringXml(String json) throws JsonProcessingException {
+        JSONObject jsonObject = new JSONObject(json);
+        String xml = XML.toString(jsonObject);
+        return xml;
     }
 
 }
