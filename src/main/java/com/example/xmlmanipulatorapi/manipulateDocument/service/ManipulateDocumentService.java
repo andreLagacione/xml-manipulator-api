@@ -127,11 +127,10 @@ public class ManipulateDocumentService {
             } else {
                 destinatarioNode = this.removeNode(destinatarioNode, oldTagName);
             }
-
-            // atualizar a tag dest com os novos valores e o documento com a tag nova tag dest, converter pra XML String e devolver pro front
         }
 
-        return this.convertJsonNodeToString(destinatarioNode);
+        // salvar esse json no Mongo e devolver pra tela o XML gerado
+        return this.updateDocumentWithNewDest(jsonDocument, destinatarioNode);
     }
 
     private JsonNode findNodeDestinatario(String jsonDocument) throws IOException {
@@ -163,30 +162,30 @@ public class ManipulateDocumentService {
         return (JsonNode) objectNode;
     }
 
-    // continuar a logica desse método
     private String updateDocumentWithNewDest(String document, JsonNode newDest) throws IOException {
-        JsonNode node = this.convertStringXmlToJsonNode(document);
+        JsonNode node = this.convertJsonStringToJsonNode(document);
         JsonNode infCteNode = node.path("CTe").path("infCte");
         JsonNode cteNode = node.path("CTe");
 
         infCteNode = this.removeNode(infCteNode, "dest");
         cteNode = this.removeNode(cteNode, "infCte");
 
-        // fazer um metodo para abstrair esses dois casos
-        ObjectNode infCteObjectNode = (ObjectNode) infCteNode;
-        infCteObjectNode.set("dest", newDest);
-        infCteNode = (JsonNode) infCteObjectNode;
+        infCteNode = this.updateNode(infCteNode, "dest", newDest);
+        cteNode = this.updateNode(cteNode, "infCte", infCteNode);
+        node = this.updateNode(node, "CTe", cteNode);
 
-        ObjectNode cteObjectNode = (ObjectNode) cteNode;
-        infCteObjectNode.set("infCte", infCteNode);
-        cteNode = (JsonNode) cteObjectNode;
-
-        // remover o CTe de node e adicionar o novo CTe, depois converter em estring e devolver para o método que chamou esse
+        return this.convertJsonNodeToString(node);
     }
 
     private String convertJsonNodeToString(JsonNode node) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
+    }
+
+    private JsonNode updateNode(JsonNode nodeToUpdate, String nodeName, JsonNode newNodeValue) {
+        ObjectNode objectNode = (ObjectNode) nodeToUpdate;
+        objectNode.set(nodeName, newNodeValue);
+        return  (JsonNode) objectNode;
     }
 
 }
