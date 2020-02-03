@@ -53,7 +53,7 @@ public class ManipulateDocumentService {
         ManipulateDocument editedDocument = new ManipulateDocument(json);
         this.manipulateDocumentRepository.insert(editedDocument);
 
-        return json;
+        return this.convertStringJsonToStringXml(json);
     }
 
     private Document createDocument(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
@@ -116,10 +116,11 @@ public class ManipulateDocumentService {
         return node;
     }
 
-    public String saveDocumentEdited(String jsonDocument, String oldTagName, String newTagName, String tagValue) throws IOException {
+    public String saveDocumentEdited(String xmlDocument, String oldTagName, String newTagName, String tagValue) throws IOException {
         Boolean hasOldTag = oldTagName != null && !oldTagName.isEmpty();
         Boolean hasNewTag = newTagName != null && !newTagName.isEmpty();
         Boolean oldAndNewTagAreEquals = oldTagName.equalsIgnoreCase(newTagName);
+        String jsonDocument = this.convertStringXmlToStringJson(xmlDocument);
         JsonNode destinatarioNode = this.findNodeDestinatario(jsonDocument);
 
 
@@ -193,9 +194,9 @@ public class ManipulateDocumentService {
         return  (JsonNode) objectNode;
     }
 
-    private String convertStringJsonToStringXml(String json) throws JsonProcessingException {
+    private String convertStringJsonToStringXml(String json) {
         JSONObject jsonObject = new JSONObject(json);
-        String xml = XML.toString(jsonObject);
+        String xml = "<cteProc versao=\"3.00\" xmlns=\"http://www.portalfiscal.inf.br/cte\">" + XML.toString(jsonObject) + "</cteProc>";
         return xml;
     }
 
