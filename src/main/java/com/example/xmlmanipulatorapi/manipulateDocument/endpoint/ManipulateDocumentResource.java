@@ -32,12 +32,12 @@ public class ManipulateDocumentResource {
     @PostMapping
     @RequestMapping(value = "/edit")
     public String saveDocumentEdited(
-            @RequestParam("jsonDocument") String jsonDocument,
+            @RequestParam("xmlDocument") String xmlDocument,
             @RequestParam("oldTagName") String oldTagName,
             @RequestParam("newTagName") String newTagName,
             @RequestParam("tagValue") String tagValue
     ) throws Exception {
-        return this.manipulateDocumentService.saveDocumentEdited(jsonDocument, oldTagName, newTagName, tagValue);
+        return this.manipulateDocumentService.saveDocumentEdited(xmlDocument, oldTagName, newTagName, tagValue);
     }
 
 }
