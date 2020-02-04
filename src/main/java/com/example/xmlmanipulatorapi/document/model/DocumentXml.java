@@ -10,13 +10,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 @NoArgsConstructor
+@Document(collection = "document")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CteProc {
+public class DocumentXml {
 
-    @JsonProperty("CTe")
-    private CTe CTe;
-
-    @JsonProperty("protCTe")
-    private ProtCTe protCTe;
+    @JsonProperty("cteProc")
+    private CteProc cteProc;
 
 }

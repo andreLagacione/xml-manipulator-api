@@ -1,8 +1,7 @@
 package com.example.xmlmanipulatorapi.document.endpoint;
 
 import com.example.xmlmanipulatorapi.commons.models.PadraoMensagemRetornoDTO;
-import com.example.xmlmanipulatorapi.document.model.CteProc;
-import com.example.xmlmanipulatorapi.document.model.DocumentListDTO;
+import com.example.xmlmanipulatorapi.document.model.DocumentXmlDTO;
 import com.example.xmlmanipulatorapi.document.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +28,7 @@ public class DocumentResource {
     }
 
     @GetMapping
-    public DocumentListDTO getDocumentos() {
+    public List<DocumentXmlDTO> getDocumentos() {
         return this.documentService.getDocumentos();
     }
 }
