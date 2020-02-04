@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -15,7 +15,7 @@ public class DocumentXmlDTO {
 
     private String id;
     private String cnpjEmissor;
-    private String cidadeCidadeEmissor;
+    private String cidadeEstadoEmissor;
     private String cnpjRemetente;
     private String cidadeEstadoRemetente;
     private String cnpjDestinatario;
