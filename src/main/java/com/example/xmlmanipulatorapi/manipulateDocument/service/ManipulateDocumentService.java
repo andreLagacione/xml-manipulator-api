@@ -1,5 +1,6 @@
 package com.example.xmlmanipulatorapi.manipulateDocument.service;
 
+import com.example.xmlmanipulatorapi.commons.exceptions.ObjectNotFoundException;
 import com.example.xmlmanipulatorapi.manipulateDocument.entity.ManipulateDocument;
 import com.example.xmlmanipulatorapi.manipulateDocument.repository.ManipulateDocumentRepository;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -45,15 +46,24 @@ public class ManipulateDocumentService {
         this.manipulateDocumentRepository = manipulateDocumentRepository;
     }
 
-    public String processarDocumento(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws IOException, TransformerException, XPathExpressionException, SAXException, ParserConfigurationException {
-        Document xml = this.createDocument(file, nomeTagCriada, valorTagCriada);
-        String xmlString = this.convertDocumentToString(xml);
-        String json = this.convertStringXmlToStringJson(xmlString);
+    public String processarDocumento(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws Exception {
 
-        ManipulateDocument editedDocument = new ManipulateDocument(json);
-        this.manipulateDocumentRepository.insert(editedDocument);
+        if (file.isEmpty()) {
+            throw new ObjectNotFoundException("Selecione um arquivo para enviar!");
+        }
 
-        return this.convertStringJsonToStringXml(json);
+        try {
+            Document xml = this.createDocument(file, nomeTagCriada, valorTagCriada);
+            String xmlString = this.convertDocumentToString(xml);
+            String json = this.convertStringXmlToStringJson(xmlString);
+
+            ManipulateDocument editedDocument = new ManipulateDocument(json);
+            this.manipulateDocumentRepository.insert(editedDocument);
+
+            return this.convertStringJsonToStringXml(json);
+        } catch (Exception e) {
+            throw new Exception("Erro ao processar o arquivo.", e.getCause());
+        }
     }
 
     private Document createDocument(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {

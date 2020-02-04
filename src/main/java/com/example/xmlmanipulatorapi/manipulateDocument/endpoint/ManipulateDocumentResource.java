@@ -1,7 +1,9 @@
 package com.example.xmlmanipulatorapi.manipulateDocument.endpoint;
 
+import com.example.xmlmanipulatorapi.commons.models.PadraoMensagemRetornoDTO;
 import com.example.xmlmanipulatorapi.manipulateDocument.service.ManipulateDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,12 +23,13 @@ public class ManipulateDocumentResource {
 
     @PostMapping
     @RequestMapping(value = "/create")
-    public String createDocumentEdited(
+    public PadraoMensagemRetornoDTO createDocumentEdited(
             @RequestParam("file") MultipartFile file,
             @RequestParam("tagName") String tagName,
             @RequestParam("tagValue") String tagValue
     ) throws Exception {
-        return this.manipulateDocumentService.processarDocumento(file, tagName, tagValue);
+        String content = this.manipulateDocumentService.processarDocumento(file, tagName, tagValue);
+        return new PadraoMensagemRetornoDTO(HttpStatus.OK, HttpStatus.valueOf("OK").value(), "Arquivo editado com sucesso!", content);
     }
 
     @PostMapping
