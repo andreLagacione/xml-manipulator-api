@@ -10,9 +10,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.mongodb.MongoClient;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
@@ -126,13 +130,14 @@ public class ManipulateDocumentService {
         return node;
     }
 
-    public String saveDocumentEdited(String xmlDocument, String oldTagName, String newTagName, String tagValue) throws IOException {
+    public String saveDocumentEdited(String documentId, String oldTagName, String newTagName, String tagValue) throws IOException {
+        String xmlDocument = this.findDocumentById(documentId);
+
         Boolean hasOldTag = oldTagName != null && !oldTagName.isEmpty();
         Boolean hasNewTag = newTagName != null && !newTagName.isEmpty();
         Boolean oldAndNewTagAreEquals = oldTagName.equalsIgnoreCase(newTagName);
-        String jsonDocument = this.convertStringXmlToStringJson(xmlDocument);
+        JsonNode jsonDocument = this.convertJsonStringToJsonNode(xmlDocument);
         JsonNode destinatarioNode = this.findNodeDestinatario(jsonDocument);
-
 
         if (hasOldTag) {
             if (hasNewTag && !oldAndNewTagAreEquals) {
@@ -149,9 +154,16 @@ public class ManipulateDocumentService {
         return this.convertStringJsonToStringXml(newJsonDocument);
     }
 
-    private JsonNode findNodeDestinatario(String jsonDocument) throws IOException {
-        JsonNode node = this.convertJsonStringToJsonNode(jsonDocument);
-        return node.path("CTe").path("infCte").path("dest");
+    private String findDocumentById(String documentId) {
+        MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"),"xml_manipulator");
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(documentId));
+        ManipulateDocument document = mongoTemplate.findOne(query, ManipulateDocument.class);
+        return document.getEditedDocument();
+    }
+
+    private JsonNode findNodeDestinatario(JsonNode jsonDocument) throws IOException {
+        return jsonDocument.path("CTe").path("infCte").path("dest");
     }
 
     private JsonNode convertJsonStringToJsonNode(String jsonDocument) throws IOException {
@@ -178,8 +190,7 @@ public class ManipulateDocumentService {
         return (JsonNode) objectNode;
     }
 
-    private String updateDocumentWithNewDest(String document, JsonNode newDest) throws IOException {
-        JsonNode node = this.convertJsonStringToJsonNode(document);
+    private String updateDocumentWithNewDest(JsonNode node, JsonNode newDest) throws IOException {
         JsonNode infCteNode = node.path("CTe").path("infCte");
         JsonNode cteNode = node.path("CTe");
 

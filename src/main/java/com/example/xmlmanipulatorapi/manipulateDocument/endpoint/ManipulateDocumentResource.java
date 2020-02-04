@@ -34,13 +34,14 @@ public class ManipulateDocumentResource {
 
     @PostMapping
     @RequestMapping(value = "/edit")
-    public String saveDocumentEdited(
-            @RequestParam("xmlDocument") String xmlDocument,
+    public PadraoMensagemRetornoDTO saveDocumentEdited(
+            @RequestParam("documentId") String documentId,
             @RequestParam("oldTagName") String oldTagName,
             @RequestParam("newTagName") String newTagName,
             @RequestParam("tagValue") String tagValue
     ) throws Exception {
-        return this.manipulateDocumentService.saveDocumentEdited(xmlDocument, oldTagName, newTagName, tagValue);
+        String content = this.manipulateDocumentService.saveDocumentEdited(documentId, oldTagName, newTagName, tagValue);
+        return new PadraoMensagemRetornoDTO(HttpStatus.OK, HttpStatus.valueOf("OK").value(), "Arquivo editado com sucesso!", content);
     }
 
 }
