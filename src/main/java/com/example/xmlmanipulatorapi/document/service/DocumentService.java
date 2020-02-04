@@ -1,9 +1,10 @@
 package com.example.xmlmanipulatorapi.document.service;
 
 import com.example.xmlmanipulatorapi.commons.exceptions.ObjectNotFoundException;
-import com.example.xmlmanipulatorapi.document.model.DocumentXml;
-import com.example.xmlmanipulatorapi.document.model.DocumentXmlDTO;
+import com.example.xmlmanipulatorapi.document.model.*;
 import com.example.xmlmanipulatorapi.document.repository.DocumentRepository;
+import com.example.xmlmanipulatorapi.manipulateDocument.service.ManipulateDocumentService;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,15 @@ import java.util.stream.Collectors;
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
+    private final ManipulateDocumentService manipulateDocumentService;
 
     @Autowired
-    public DocumentService(DocumentRepository documentRepository) {
+    public DocumentService(DocumentRepository documentRepository, ManipulateDocumentService manipulateDocumentService) {
         this.documentRepository = documentRepository;
+        this.manipulateDocumentService = manipulateDocumentService;
     }
 
-    public void readFile(MultipartFile file) throws Exception {
+    public String readFile(MultipartFile file) throws Exception {
 
         if (file.isEmpty()) {
             throw new ObjectNotFoundException("Selecione um arquivo para enviar!");
@@ -35,6 +38,11 @@ public class DocumentService {
             String readContent = new String(Files.readAllBytes(Paths.get(file.getOriginalFilename())));
             DocumentXml documentXml = xmlMapper.readValue(readContent, DocumentXml.class);
             this.documentRepository.insert(documentXml);
+
+            JsonNode node = this.manipulateDocumentService.convertStringXmlToJsonNode(readContent);
+            String nodeString = this.manipulateDocumentService.convertJsonNodeToString(node);
+            String stringDocument = this.manipulateDocumentService.convertStringJsonToStringXml(nodeString);
+            return stringDocument;
         } catch (Exception e) {
             throw new Exception("Erro ao processar o arquivo.", e.getCause());
         }
@@ -49,15 +57,25 @@ public class DocumentService {
 
     private DocumentXmlDTO mapDocumentsDto(DocumentXml documentXml) {
         DocumentXmlDTO documentXmlDTO = new DocumentXmlDTO();
-//        documentXmlDTO.setId(documentXml.get_Id());
-        documentXmlDTO.setCnpjEmissor(documentXml.getCteProc().getCTe().getInfCte().getEmit().getCNPJ());
-        documentXmlDTO.setCidadeCidadeEmissor(documentXml.getCteProc().getCTe().getInfCte().);
-        documentXmlDTO.setCnpjRemetente(documentXml.getCteProc().getCTe().getInfCte().);
-        documentXmlDTO.setCidadeEstadoRemetente(documentXml.getCteProc().getCTe().getInfCte().);
-        documentXmlDTO.setCnpjDestinatario(documentXml.getCteProc().getCTe().getInfCte().);
-        documentXmlDTO.setCidadeEstadoDestinatario(documentXml.getCteProc().getCTe().getInfCte().);
-        documentXmlDTO.setChaveAcesso(documentXml.getCteProc().getCTe().getInfCte().);
-        documentXmlDTO.setDataEmissao(documentXml.getCteProc().getCTe().getInfCte().);
+
+        Emit emit = documentXml.getCteProc().getCTe().getInfCte().getEmit();
+        String cidadeEstadoEmissor = emit.getEnderEmit().getXMun() + " - " + emit.getEnderEmit().getUF();
+
+        Rem rem = documentXml.getCteProc().getCTe().getInfCte().getRem();
+        String cidadeEstadoRemetente = rem.getEnderReme().getXMun() + " - " + rem.getEnderReme().getUF();
+
+        Dest dest = documentXml.getCteProc().getCTe().getInfCte().getDest();
+        String cidadeEstadoDestinatario = dest.getEnderDest().getXMun() + " - " + dest.getEnderDest().getUF();
+
+        documentXmlDTO.setId(documentXml.getId());
+        documentXmlDTO.setCnpjEmissor(emit.getCNPJ());
+        documentXmlDTO.setCidadeEstadoEmissor(cidadeEstadoEmissor);
+        documentXmlDTO.setCnpjRemetente(rem.getCNPJ());
+        documentXmlDTO.setCidadeEstadoRemetente(cidadeEstadoRemetente);
+        documentXmlDTO.setCnpjDestinatario(dest.getCNPJ());
+        documentXmlDTO.setCidadeEstadoDestinatario(cidadeEstadoDestinatario);
+        documentXmlDTO.setChaveAcesso(documentXml.getCteProc().getProtCTe().getInfProt().getChCTe());
+        documentXmlDTO.setDataEmissao(documentXml.getCteProc().getCTe().getInfCte().getIde().getDhEmi());
         documentXmlDTO.setEdited(false);
         return documentXmlDTO;
     }
