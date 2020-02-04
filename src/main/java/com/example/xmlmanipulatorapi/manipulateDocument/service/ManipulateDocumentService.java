@@ -1,6 +1,8 @@
 package com.example.xmlmanipulatorapi.manipulateDocument.service;
 
 import com.example.xmlmanipulatorapi.commons.exceptions.ObjectNotFoundException;
+import com.example.xmlmanipulatorapi.document.model.DocumentXml;
+import com.example.xmlmanipulatorapi.document.model.DocumentXmlDTO;
 import com.example.xmlmanipulatorapi.manipulateDocument.entity.ManipulateDocument;
 import com.example.xmlmanipulatorapi.manipulateDocument.repository.ManipulateDocumentRepository;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -39,6 +41,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 
 @Service
 public class ManipulateDocumentService {
@@ -102,7 +105,7 @@ public class ManipulateDocumentService {
         XPathFactory xpf = XPathFactory.newInstance();
         XPath xPath = xpf.newXPath();
 
-        NodeList nodes = (NodeList) xPath.evaluate("/cteProc/CTe/infCte/dest", xml, XPathConstants.NODESET);
+        NodeList nodes = (NodeList) xPath.evaluate("/xml/cteProc/CTe/infCte/dest", xml, XPathConstants.NODESET);
 
         Node node = nodes.item(0);
 
@@ -130,8 +133,12 @@ public class ManipulateDocumentService {
         return node;
     }
 
-    public String saveDocumentEdited(String documentId, String oldTagName, String newTagName, String tagValue) throws IOException {
-        String xmlDocument = this.findDocumentById(documentId);
+    public String saveDocumentEdited(String documentId, String oldTagName, String newTagName, String tagValue, Boolean isEdited) throws Exception {
+        String xmlDocument = this.findDocumentById(documentId, isEdited);
+
+        if (xmlDocument == null) {
+            throw new ObjectNotFoundException("Documento não encontrado");
+        }
 
         Boolean hasOldTag = oldTagName != null && !oldTagName.isEmpty();
         Boolean hasNewTag = newTagName != null && !newTagName.isEmpty();
@@ -154,16 +161,23 @@ public class ManipulateDocumentService {
         return this.convertStringJsonToStringXml(newJsonDocument);
     }
 
-    private String findDocumentById(String documentId) {
+    private String findDocumentById(String documentId, Boolean isEdited) throws IOException {
         MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"),"xml_manipulator");
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(documentId));
-        ManipulateDocument document = mongoTemplate.findOne(query, ManipulateDocument.class);
-        return document.getEditedDocument();
+
+        if (isEdited) {
+            ManipulateDocument document = mongoTemplate.findOne(query, ManipulateDocument.class);
+            return document == null ? null : document.getEditedDocument();
+        } else {
+            DocumentXml document = mongoTemplate.findOne(query, DocumentXml.class);
+            ObjectMapper mapper = new ObjectMapper();
+            return document == null ? null : mapper.writeValueAsString(document);
+        }
     }
 
     private JsonNode findNodeDestinatario(JsonNode jsonDocument) throws IOException {
-        return jsonDocument.path("CTe").path("infCte").path("dest");
+        return jsonDocument.path("cteProc").path("CTe").path("infCte").path("dest");
     }
 
     private JsonNode convertJsonStringToJsonNode(String jsonDocument) throws IOException {
@@ -173,15 +187,20 @@ public class ManipulateDocumentService {
         return mapper.readTree(jsonParser);
     }
 
-    private JsonNode updateTag(JsonNode destinatarioNode, String oldTagName, String newTagName, String tagValue) {
+    private JsonNode updateTag(JsonNode destinatarioNode, String oldTagName, String newTagName, String tagValue) throws Exception {
         destinatarioNode = this.removeNode(destinatarioNode, oldTagName);
         return this.setNewTag(destinatarioNode, newTagName, tagValue);
     }
 
-    private JsonNode removeNode(JsonNode node, String oldTagName) {
-        ObjectNode objectNode = (ObjectNode) node;
-        objectNode.remove(oldTagName);
-        return (JsonNode) objectNode;
+    private JsonNode removeNode(JsonNode node, String oldTagName) throws Exception {
+        try {
+            ObjectNode objectNode = (ObjectNode) node;
+            objectNode.remove(oldTagName);
+            return (JsonNode) objectNode;
+        } catch (Exception e) {
+            throw new Exception("A tag informada não foi encontrada no documento!");
+        }
+
     }
 
     private JsonNode setNewTag(JsonNode node, String newTagName, String tagValue) {
@@ -190,9 +209,9 @@ public class ManipulateDocumentService {
         return (JsonNode) objectNode;
     }
 
-    private String updateDocumentWithNewDest(JsonNode node, JsonNode newDest) throws IOException {
-        JsonNode infCteNode = node.path("CTe").path("infCte");
-        JsonNode cteNode = node.path("CTe");
+    private String updateDocumentWithNewDest(JsonNode node, JsonNode newDest) throws Exception {
+        JsonNode infCteNode = node.path("cteProc").path("CTe").path("infCte");
+        JsonNode cteNode = node.path("cteProc").path("CTe");
 
         infCteNode = this.removeNode(infCteNode, "dest");
         cteNode = this.removeNode(cteNode, "infCte");
@@ -217,7 +236,7 @@ public class ManipulateDocumentService {
 
     public String convertStringJsonToStringXml(String json) {
         JSONObject jsonObject = new JSONObject(json);
-        String xml = "<cteProc versao=\"3.00\" xmlns=\"http://www.portalfiscal.inf.br/cte\">" + XML.toString(jsonObject) + "</cteProc>";
+        String xml = "<xml><cteProc versao=\"3.00\" xmlns=\"http://www.portalfiscal.inf.br/cte\">" + XML.toString(jsonObject) + "</cteProc></xml>";
         return xml;
     }
 

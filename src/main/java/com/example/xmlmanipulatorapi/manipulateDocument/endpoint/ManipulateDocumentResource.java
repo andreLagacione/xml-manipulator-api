@@ -1,14 +1,14 @@
 package com.example.xmlmanipulatorapi.manipulateDocument.endpoint;
 
 import com.example.xmlmanipulatorapi.commons.models.PadraoMensagemRetornoDTO;
+import com.example.xmlmanipulatorapi.document.model.DocumentXmlDTO;
 import com.example.xmlmanipulatorapi.manipulateDocument.service.ManipulateDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/edited-document")
@@ -38,9 +38,10 @@ public class ManipulateDocumentResource {
             @RequestParam("documentId") String documentId,
             @RequestParam("oldTagName") String oldTagName,
             @RequestParam("newTagName") String newTagName,
-            @RequestParam("tagValue") String tagValue
+            @RequestParam("tagValue") String tagValue,
+            @RequestParam("isEdited") Boolean isEdited
     ) throws Exception {
-        String content = this.manipulateDocumentService.saveDocumentEdited(documentId, oldTagName, newTagName, tagValue);
+        String content = this.manipulateDocumentService.saveDocumentEdited(documentId, oldTagName, newTagName, tagValue, isEdited);
         return new PadraoMensagemRetornoDTO(HttpStatus.OK, HttpStatus.valueOf("OK").value(), "Arquivo editado com sucesso!", content);
     }
 
