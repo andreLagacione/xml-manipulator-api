@@ -15,5 +15,6 @@ public class PadraoMensagemRetornoDTO {
     private HttpStatus httpStatus;
     private Integer httpStatusCode;
     private String message;
+    private String content;
 
 }
