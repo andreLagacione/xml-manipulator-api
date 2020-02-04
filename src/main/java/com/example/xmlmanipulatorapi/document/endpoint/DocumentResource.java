@@ -23,12 +23,13 @@ public class DocumentResource {
 
     @PostMapping
     public PadraoMensagemRetornoDTO uploadFile(@RequestParam("file") MultipartFile file) throws Exception {
-        this.documentService.readFile(file);
-        return new PadraoMensagemRetornoDTO(HttpStatus.OK, HttpStatus.valueOf("OK").value(), "Arquivo enviado com sucesso!");
+        String content = this.documentService.readFile(file);
+        return new PadraoMensagemRetornoDTO(HttpStatus.OK, HttpStatus.valueOf("OK").value(), "Arquivo enviado com sucesso!", content);
     }
 
     @GetMapping
     public List<DocumentXmlDTO> getDocumentos() {
         return this.documentService.getDocumentos();
     }
+    
 }
