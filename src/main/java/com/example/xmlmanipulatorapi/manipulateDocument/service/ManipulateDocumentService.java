@@ -79,7 +79,7 @@ public class ManipulateDocumentService {
         return objectMapper.writeValueAsString(node);
     }
 
-    private JsonNode convertStringXmlToJsonNode(String xml) throws IOException {
+    public JsonNode convertStringXmlToJsonNode(String xml) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         return xmlMapper.readTree(xml.getBytes());
     }
@@ -183,7 +183,7 @@ public class ManipulateDocumentService {
         return this.convertJsonNodeToString(node);
     }
 
-    private String convertJsonNodeToString(JsonNode node) throws JsonProcessingException {
+    public String convertJsonNodeToString(JsonNode node) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
     }
@@ -194,7 +194,7 @@ public class ManipulateDocumentService {
         return  (JsonNode) objectNode;
     }
 
-    private String convertStringJsonToStringXml(String json) {
+    public String convertStringJsonToStringXml(String json) {
         JSONObject jsonObject = new JSONObject(json);
         String xml = "<cteProc versao=\"3.00\" xmlns=\"http://www.portalfiscal.inf.br/cte\">" + XML.toString(jsonObject) + "</cteProc>";
         return xml;
