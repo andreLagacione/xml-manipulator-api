@@ -31,5 +31,5 @@ public class DocumentResource {
     public List<DocumentXmlDTO> getDocumentos() {
         return this.documentService.getDocumentos();
     }
-    
+
 }
