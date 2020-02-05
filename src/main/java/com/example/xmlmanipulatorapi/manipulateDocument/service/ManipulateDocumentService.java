@@ -178,7 +178,7 @@ public class ManipulateDocumentService {
         }
     }
 
-    private JsonNode findNodeDestinatario(JsonNode jsonDocument) throws IOException {
+    private JsonNode findNodeDestinatario(JsonNode jsonDocument) {
         return jsonDocument.path("cteProc").path("CTe").path("infCte").path("dest");
     }
 
@@ -255,20 +255,10 @@ public class ManipulateDocumentService {
             return documentNode;
         }).collect(Collectors.toList());
 
-        return documentsJsonNode.stream().map(item -> {
-            DocumentXmlDTO documentXmlDTO = new DocumentXmlDTO();
-
-            try {
-                documentXmlDTO = this.convertDocumentNodeToDocumentXmlDto(item);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            return documentXmlDTO;
-        }).collect(Collectors.toList());
+        return documentsJsonNode.stream().map(item -> this.convertDocumentNodeToDocumentXmlDto(item)).collect(Collectors.toList());
     }
 
-    private DocumentXmlDTO convertDocumentNodeToDocumentXmlDto(JsonNode node) throws ParseException {
+    private DocumentXmlDTO convertDocumentNodeToDocumentXmlDto(JsonNode node) {
         DocumentXmlDTO documentXmlDTO = new DocumentXmlDTO();
 
         JsonNode infCte = node.path("cteProc").path("CTe").path("infCte");
