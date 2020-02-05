@@ -41,7 +41,9 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.text.ParseException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ManipulateDocumentService {
@@ -64,7 +66,7 @@ public class ManipulateDocumentService {
             String xmlString = this.convertDocumentToString(xml);
             String json = this.convertStringXmlToStringJson(xmlString);
 
-            ManipulateDocument editedDocument = new ManipulateDocument(json);
+            ManipulateDocument editedDocument = new ManipulateDocument(json, null);
             this.manipulateDocumentRepository.insert(editedDocument);
 
             return this.convertStringJsonToStringXml(json);
@@ -155,7 +157,7 @@ public class ManipulateDocumentService {
         }
 
         String newJsonDocument = this.updateDocumentWithNewDest(jsonDocument, destinatarioNode);
-        ManipulateDocument editedDocument = new ManipulateDocument(newJsonDocument);
+        ManipulateDocument editedDocument = new ManipulateDocument(newJsonDocument, null);
         this.manipulateDocumentRepository.insert(editedDocument);
 
         return this.convertStringJsonToStringXml(newJsonDocument);
@@ -238,6 +240,59 @@ public class ManipulateDocumentService {
         JSONObject jsonObject = new JSONObject(json);
         String xml = "<xml><cteProc versao=\"3.00\" xmlns=\"http://www.portalfiscal.inf.br/cte\">" + XML.toString(jsonObject) + "</cteProc></xml>";
         return xml;
+    }
+
+    public List<DocumentXmlDTO> getAllEditedDocument() {
+        List<ManipulateDocument> documents = this.manipulateDocumentRepository.findAll();
+        List<JsonNode> documentsJsonNode = documents.stream().map(item -> {
+            JsonNode documentNode = null;
+            try {
+                documentNode = this.convertJsonStringToJsonNode(item.getEditedDocument());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return documentNode;
+        }).collect(Collectors.toList());
+
+        return documentsJsonNode.stream().map(item -> {
+            DocumentXmlDTO documentXmlDTO = new DocumentXmlDTO();
+
+            try {
+                documentXmlDTO = this.convertDocumentNodeToDocumentXmlDto(item);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            return documentXmlDTO;
+        }).collect(Collectors.toList());
+    }
+
+    private DocumentXmlDTO convertDocumentNodeToDocumentXmlDto(JsonNode node) throws ParseException {
+        DocumentXmlDTO documentXmlDTO = new DocumentXmlDTO();
+
+        JsonNode infCte = node.path("cteProc").path("CTe").path("infCte");
+        JsonNode emit = infCte.path("emit");
+
+        String cidadeEstadoEmissor = emit.path("enderEmit").path("xMun").asText() + " - " + emit.path("enderEmit").path("UF").asText();
+
+        JsonNode rem = infCte.path("rem");
+        String cidadeEstadoRemetente = rem.path("enderReme").path("xMun").asText() + " - " + rem.path("enderReme").path("UF").asText();
+
+        JsonNode dest = infCte.path("dest");
+        String cidadeEstadoDestinatario = dest.path("enderReme").path("xMun").asText() + " - " + dest.path("enderReme").path("UF").asText();
+
+        documentXmlDTO.setId(node.path("id").asText());
+        documentXmlDTO.setCnpjEmissor(emit.path("CNPJ").asText());
+        documentXmlDTO.setCidadeEstadoEmissor(cidadeEstadoEmissor);
+        documentXmlDTO.setCnpjRemetente(rem.path("CNPJ").asText());
+        documentXmlDTO.setCidadeEstadoRemetente(cidadeEstadoRemetente);
+        documentXmlDTO.setCnpjDestinatario(dest.path("CNPJ").asText());
+        documentXmlDTO.setCidadeEstadoDestinatario(cidadeEstadoDestinatario);
+        documentXmlDTO.setChaveAcesso(node.path("cteProc").path("protCTe").path("infProt").path("chCTe").asText());
+        documentXmlDTO.setDataEmissao(infCte.path("ide").path("dhEmi").asText());
+        documentXmlDTO.setEdited(true);
+        return documentXmlDTO;
     }
 
 }

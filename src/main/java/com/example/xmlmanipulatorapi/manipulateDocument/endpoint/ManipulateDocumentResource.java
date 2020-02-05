@@ -45,4 +45,9 @@ public class ManipulateDocumentResource {
         return new PadraoMensagemRetornoDTO(HttpStatus.OK, HttpStatus.valueOf("OK").value(), "Arquivo editado com sucesso!", content);
     }
 
+    @GetMapping
+    public List<DocumentXmlDTO> getAllEditedDocument() {
+        return this.manipulateDocumentService.getAllEditedDocument();
+    }
+
 }
