@@ -21,7 +21,7 @@ public class DocumentXmlDTO {
     private String cnpjDestinatario;
     private String cidadeEstadoDestinatario;
     private String chaveAcesso;
-    private Date dataEmissao;
+    private String dataEmissao;
     private Boolean edited;
 
 }
