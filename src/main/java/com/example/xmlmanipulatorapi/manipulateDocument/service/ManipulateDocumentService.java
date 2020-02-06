@@ -3,11 +3,13 @@ package com.example.xmlmanipulatorapi.manipulateDocument.service;
 import com.example.xmlmanipulatorapi.commons.exceptions.ObjectNotFoundException;
 import com.example.xmlmanipulatorapi.document.model.DocumentXml;
 import com.example.xmlmanipulatorapi.document.model.DocumentXmlDTO;
+import com.example.xmlmanipulatorapi.manipulateDocument.configuration.property.TagDestinatarioProperty;
 import com.example.xmlmanipulatorapi.manipulateDocument.entity.ManipulateDocument;
 import com.example.xmlmanipulatorapi.manipulateDocument.repository.ManipulateDocumentRepository;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -43,16 +45,22 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class ManipulateDocumentService {
 
     private final ManipulateDocumentRepository manipulateDocumentRepository;
+    private final TagDestinatarioProperty tagDestinatarioProperty;
 
     @Autowired
-    public ManipulateDocumentService(ManipulateDocumentRepository manipulateDocumentRepository) {
+    public ManipulateDocumentService(
+            ManipulateDocumentRepository manipulateDocumentRepository,
+            TagDestinatarioProperty tagDestinatarioProperty
+    ) {
         this.manipulateDocumentRepository = manipulateDocumentRepository;
+        this.tagDestinatarioProperty = tagDestinatarioProperty;
     }
 
     public String processarDocumento(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws Exception {
@@ -283,6 +291,32 @@ public class ManipulateDocumentService {
         documentXmlDTO.setDataEmissao(infCte.path("ide").path("dhEmi").asText());
         documentXmlDTO.setEdited(true);
         return documentXmlDTO;
+    }
+
+    public String findDocumentByIdAndGetTagName(String documentId) throws IOException {
+        String document = this.findDocumentById(documentId, true);
+
+        if (document == null) {
+            throw new ObjectNotFoundException("Documento não encontrado");
+        }
+
+        JsonNode node = this.convertJsonStringToJsonNode(document);
+        JsonNode destNode = node.path("cteProc").path("CTe").path("infCte").path("dest");
+
+        // transformar em um metodo
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> map = mapper.convertValue(destNode, new TypeReference<Map<String, Object>>(){});
+
+        // transformar em um metodo e retornar os nomes das keys (tags)
+        for (Map.Entry<String, Object> item : map.entrySet()) {
+            System.out.println(item.getKey());
+        }
+
+        // pegar a tag que é diferente das tags que foram setadas no properties
+
+
+
+        return "";
     }
 
 }

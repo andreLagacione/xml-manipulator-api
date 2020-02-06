@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -48,6 +49,12 @@ public class ManipulateDocumentResource {
     @GetMapping
     public List<DocumentXmlDTO> getAllEditedDocument() {
         return this.manipulateDocumentService.getAllEditedDocument();
+    }
+
+    @GetMapping
+    @RequestMapping(value = "/{id}")
+    public String findDocumentByIdAndGetTagName(@PathVariable String id) throws IOException {
+        return this.manipulateDocumentService.findDocumentByIdAndGetTagName(id);
     }
 
 }
