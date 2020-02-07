@@ -2,6 +2,7 @@ package com.example.xmlmanipulatorapi.manipulateDocument.endpoint;
 
 import com.example.xmlmanipulatorapi.commons.models.PadraoMensagemRetornoDTO;
 import com.example.xmlmanipulatorapi.document.model.DocumentXmlDTO;
+import com.example.xmlmanipulatorapi.manipulateDocument.model.CustomTagNameModel;
 import com.example.xmlmanipulatorapi.manipulateDocument.service.ManipulateDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,7 +54,7 @@ public class ManipulateDocumentResource {
 
     @GetMapping
     @RequestMapping(value = "/{id}")
-    public String findDocumentByIdAndGetTagName(@PathVariable String id) throws IOException {
+    public CustomTagNameModel findDocumentByIdAndGetTagName(@PathVariable String id) throws IOException {
         return this.manipulateDocumentService.findDocumentByIdAndGetTagName(id);
     }
 

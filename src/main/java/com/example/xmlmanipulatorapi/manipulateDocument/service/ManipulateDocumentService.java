@@ -5,6 +5,7 @@ import com.example.xmlmanipulatorapi.document.model.DocumentXml;
 import com.example.xmlmanipulatorapi.document.model.DocumentXmlDTO;
 import com.example.xmlmanipulatorapi.manipulateDocument.configuration.property.TagDestinatarioProperty;
 import com.example.xmlmanipulatorapi.manipulateDocument.entity.ManipulateDocument;
+import com.example.xmlmanipulatorapi.manipulateDocument.model.CustomTagNameModel;
 import com.example.xmlmanipulatorapi.manipulateDocument.repository.ManipulateDocumentRepository;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -293,7 +294,7 @@ public class ManipulateDocumentService {
         return documentXmlDTO;
     }
 
-    public String findDocumentByIdAndGetTagName(String documentId) throws IOException {
+    public CustomTagNameModel findDocumentByIdAndGetTagName(String documentId) throws IOException {
         String document = this.findDocumentById(documentId, true);
 
         if (document == null) {
@@ -306,7 +307,7 @@ public class ManipulateDocumentService {
         Map<String, Object> map = this.convertJsonNodeToMap(destNode);
         List<String> nodeNames = this.getNodeNameInMap(map);
 
-        return this.findCustomTag(nodeNames);
+        return new CustomTagNameModel (this.findCustomTag(nodeNames));
     }
 
     private Map<String, Object> convertJsonNodeToMap(JsonNode destNode) {
