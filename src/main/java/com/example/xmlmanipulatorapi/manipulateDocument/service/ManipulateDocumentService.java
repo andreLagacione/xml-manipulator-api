@@ -43,7 +43,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -303,20 +303,42 @@ public class ManipulateDocumentService {
         JsonNode node = this.convertJsonStringToJsonNode(document);
         JsonNode destNode = node.path("cteProc").path("CTe").path("infCte").path("dest");
 
-        // transformar em um metodo
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> map = mapper.convertValue(destNode, new TypeReference<Map<String, Object>>(){});
+        Map<String, Object> map = this.convertJsonNodeToMap(destNode);
+        List<String> nodeNames = this.getNodeNameInMap(map);
 
-        // transformar em um metodo e retornar os nomes das keys (tags)
-        for (Map.Entry<String, Object> item : map.entrySet()) {
-            System.out.println(item.getKey());
+        return this.findCustomTag(nodeNames);
+    }
+
+    private Map<String, Object> convertJsonNodeToMap(JsonNode destNode) {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.convertValue(destNode, new TypeReference<Map<String, Object>>(){});
+    }
+
+    private List<String> getNodeNameInMap(Map<String, Object> map) {
+        List<String> nodeNames = new ArrayList<>();
+
+        for (Map.Entry<String, Object> node : map.entrySet()) {
+            nodeNames.add(node.getKey());
         }
 
-        // pegar a tag que é diferente das tags que foram setadas no properties
+        return nodeNames;
+    }
 
+    private String findCustomTag(List<String> documentTags) {
+        List<String> defaultTags = this.getDefaultTags();
+        documentTags.removeAll(defaultTags);
+        return documentTags.get(0);
+    }
 
+    private List<String> getDefaultTags() {
+        List<String> defaultTags = new ArrayList<>();
+        String[] defaultTagNames = this.tagDestinatarioProperty.getTagsDefault().split(",");
 
-        return "";
+        for (String tag : defaultTagNames) {
+            defaultTags.add(tag);
+        }
+
+        return defaultTags;
     }
 
 }
