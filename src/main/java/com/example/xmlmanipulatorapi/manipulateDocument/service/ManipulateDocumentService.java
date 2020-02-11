@@ -75,7 +75,7 @@ public class ManipulateDocumentService {
             String xmlString = this.convertDocumentToString(xml);
             String json = this.convertStringXmlToStringJson(xmlString);
 
-            ManipulateDocument editedDocument = new ManipulateDocument(json, null);
+            ManipulateDocument editedDocument = new ManipulateDocument(json);
             this.manipulateDocumentRepository.insert(editedDocument);
 
             return this.convertStringJsonToStringXml(json);
@@ -165,6 +165,7 @@ public class ManipulateDocumentService {
             }
         }
 
+        // corrigir essa rotina, se isEdited for true apenas dar um update no registro existente, senão inserir um novo registro
         String newJsonDocument = this.updateDocumentWithNewDest(jsonDocument, destinatarioNode);
         ManipulateDocument editedDocument = new ManipulateDocument(newJsonDocument, null);
         this.manipulateDocumentRepository.insert(editedDocument);
@@ -253,18 +254,24 @@ public class ManipulateDocumentService {
 
     public List<DocumentXmlDTO> getAllEditedDocument() {
         List<ManipulateDocument> documents = this.manipulateDocumentRepository.findAll();
-        List<JsonNode> documentsJsonNode = documents.stream().map(item -> {
-            JsonNode documentNode = null;
-            try {
-                documentNode = this.convertJsonStringToJsonNode(item.getEditedDocument());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (documents.size() > 0) {
+            List<JsonNode> documentsJsonNode = documents.stream().map(item -> {
+                JsonNode documentNode = null;
+                try {
+                    documentNode = this.convertJsonStringToJsonNode(item.getEditedDocument());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-            return documentNode;
-        }).collect(Collectors.toList());
+                return documentNode;
+            }).collect(Collectors.toList());
 
-        return documentsJsonNode.stream().map(item -> this.convertDocumentNodeToDocumentXmlDto(item)).collect(Collectors.toList());
+            return documentsJsonNode.stream().map(item -> this.convertDocumentNodeToDocumentXmlDto(item)).collect(Collectors.toList());
+        }
+
+        List<DocumentXmlDTO> documentXmlDTO = new ArrayList<>();
+
+        return documentXmlDTO;
     }
 
     private DocumentXmlDTO convertDocumentNodeToDocumentXmlDto(JsonNode node) {
