@@ -165,10 +165,16 @@ public class ManipulateDocumentService {
             }
         }
 
-        // corrigir essa rotina, se isEdited for true apenas dar um update no registro existente, senão inserir um novo registro
         String newJsonDocument = this.updateDocumentWithNewDest(jsonDocument, destinatarioNode);
-        ManipulateDocument editedDocument = new ManipulateDocument(newJsonDocument, null);
-        this.manipulateDocumentRepository.insert(editedDocument);
+        ManipulateDocument editedDocument;
+
+        if (isEdited) {
+            editedDocument = new ManipulateDocument(documentId, newJsonDocument);
+            this.manipulateDocumentRepository.save(editedDocument);
+        } else {
+            editedDocument = new ManipulateDocument(newJsonDocument);
+            this.manipulateDocumentRepository.insert(editedDocument);
+        }
 
         return this.convertStringJsonToStringXml(newJsonDocument);
     }
