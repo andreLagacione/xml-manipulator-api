@@ -1,4 +1,4 @@
-package com.lagacione.faculdademarotinhaapi.configurations;
+package com.example.xmlmanipulatorapi.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
