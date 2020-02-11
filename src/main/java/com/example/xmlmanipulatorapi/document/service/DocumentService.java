@@ -75,7 +75,7 @@ public class DocumentService {
         documentXmlDTO.setCnpjDestinatario(dest.getCNPJ());
         documentXmlDTO.setCidadeEstadoDestinatario(cidadeEstadoDestinatario);
         documentXmlDTO.setChaveAcesso(documentXml.getCteProc().getProtCTe().getInfProt().getChCTe());
-        documentXmlDTO.setDataEmissao(documentXml.getCteProc().getCTe().getInfCte().getIde().getDhEmi().toString());
+        documentXmlDTO.setDataEmissao(documentXml.getCteProc().getCTe().getInfCte().getIde().getDhEmi().getTime());
         documentXmlDTO.setEdited(false);
         return documentXmlDTO;
     }
