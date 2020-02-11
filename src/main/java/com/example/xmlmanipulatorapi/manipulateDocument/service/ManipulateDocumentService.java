@@ -3,6 +3,7 @@ package com.example.xmlmanipulatorapi.manipulateDocument.service;
 import com.example.xmlmanipulatorapi.commons.exceptions.ObjectNotFoundException;
 import com.example.xmlmanipulatorapi.document.model.DocumentXml;
 import com.example.xmlmanipulatorapi.document.model.DocumentXmlDTO;
+import com.example.xmlmanipulatorapi.manipulateDocument.configuration.property.MongoClientProperty;
 import com.example.xmlmanipulatorapi.manipulateDocument.configuration.property.TagDestinatarioProperty;
 import com.example.xmlmanipulatorapi.manipulateDocument.entity.ManipulateDocument;
 import com.example.xmlmanipulatorapi.manipulateDocument.model.CustomTagNameModel;
@@ -54,14 +55,17 @@ public class ManipulateDocumentService {
 
     private final ManipulateDocumentRepository manipulateDocumentRepository;
     private final TagDestinatarioProperty tagDestinatarioProperty;
+    private final MongoClientProperty mongoClientProperty;
 
     @Autowired
     public ManipulateDocumentService(
             ManipulateDocumentRepository manipulateDocumentRepository,
-            TagDestinatarioProperty tagDestinatarioProperty
+            TagDestinatarioProperty tagDestinatarioProperty,
+            MongoClientProperty mongoClientProperty
     ) {
         this.manipulateDocumentRepository = manipulateDocumentRepository;
         this.tagDestinatarioProperty = tagDestinatarioProperty;
+        this.mongoClientProperty = mongoClientProperty;
     }
 
     public String processarDocumento(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws Exception {
@@ -180,7 +184,10 @@ public class ManipulateDocumentService {
     }
 
     private String findDocumentById(String documentId, Boolean isEdited) throws IOException {
-        MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient("127.0.0.1"),"xml_manipulator");
+        MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient(
+                this.mongoClientProperty.getHost()),
+                this.mongoClientProperty.getDatabaseName()
+        );
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(documentId));
 
