@@ -21,4 +21,7 @@ public class ManipulateDocument {
 
     private String editedDocument;
 
+    public ManipulateDocument(String editedDocument) {
+        this.editedDocument = editedDocument;
+    }
 }
