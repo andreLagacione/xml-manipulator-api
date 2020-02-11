@@ -302,7 +302,7 @@ public class ManipulateDocumentService {
         documentXmlDTO.setCnpjDestinatario(dest.path("CNPJ").asText());
         documentXmlDTO.setCidadeEstadoDestinatario(cidadeEstadoDestinatario);
         documentXmlDTO.setChaveAcesso(node.path("cteProc").path("protCTe").path("infProt").path("chCTe").asText());
-        documentXmlDTO.setDataEmissao(infCte.path("ide").path("dhEmi").asText());
+        documentXmlDTO.setDataEmissao(new Long(infCte.path("ide").path("dhEmi").asText()));
         documentXmlDTO.setEdited(true);
         return documentXmlDTO;
     }
