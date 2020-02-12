@@ -29,11 +29,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -41,16 +39,14 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -377,9 +373,14 @@ public class ManipulateDocumentService {
         return xmlNode.path("cteProc").path("CTe").path("infCte").path("ide").path("dhEmi").asText();
     }
 
-    private String convertDateToTimestamp(String date) {
-        // converter a data recebida em timestamp e retorna-la como string
-        return "";
+    private String convertDateToTimestamp(String date) throws ParseException {
+        String[] splitDate = date.split("T");
+        String[] splitHour = splitDate[1].split("-");
+
+        String pattern = "yyyy-MM-dd HH:mm:ss";
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+        Long timestamp = formatter.parse(splitDate[0] + " " + splitHour[0]).getTime();
+        return timestamp.toString();
     }
 
     private Element createOrUpdateNode(Document xml, String nomeTagCriada, String valorTagCriada) {
