@@ -45,9 +45,12 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,11 +87,11 @@ public class ManipulateDocumentService {
 
             return this.convertStringJsonToStringXml(json);
         } catch (Exception e) {
-            throw new Exception("Erro ao processar o arquivo.", e.getCause());
+            throw new Exception("Erro ao processar o arquivo: " + e.getMessage());
         }
     }
 
-    private Document createDocument(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
+    private Document createDocument(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws Exception {
         String fileName = file.getOriginalFilename();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -116,19 +119,25 @@ public class ManipulateDocumentService {
         return xmlMapper.readTree(xml.getBytes());
     }
 
-    private Document adicionarNovaTag(Document xml, String nomeTagCriada, String valorTagCriada) throws XPathExpressionException {
+    private Document adicionarNovaTag(Document xml, String nomeTagCriada, String valorTagCriada) throws Exception {
         XPathFactory xpf = XPathFactory.newInstance();
         XPath xPath = xpf.newXPath();
 
         NodeList nodes = (NodeList) xPath.evaluate("/xml/cteProc/CTe/infCte/dest", xml, XPathConstants.NODESET);
-
+        NodeList nodesIde = (NodeList) xPath.evaluate("/xml/cteProc/CTe/infCte/ide", xml, XPathConstants.NODESET);
         Node node = nodes.item(0);
+        Node nodeIde = nodesIde.item(0);
 
         if ("dest".equals(node.getNodeName())) {
-            Element newNode = xml.createElement(nomeTagCriada);
-            newNode.appendChild(xml.createTextNode(valorTagCriada));
             node = this.removerNodeSeExistir(node, nomeTagCriada);
-            node.appendChild(newNode);
+            node.appendChild(this.createOrUpdateNode(xml, nomeTagCriada, valorTagCriada));
+        }
+
+        if ("ide".equals(nodeIde.getNodeName())) {
+            String dhEmiValue = this.findNodeDateAndGetHisValue(xml);
+            String convertedDate = this.convertDateToTimestamp(dhEmiValue);
+            nodeIde = this.removerNodeSeExistir(nodeIde, "dhEmi");
+            nodeIde.appendChild(this.createOrUpdateNode(xml, "dhEmi", convertedDate));
         }
 
         return xml;
@@ -360,6 +369,23 @@ public class ManipulateDocumentService {
         }
 
         return defaultTags;
+    }
+
+    private String findNodeDateAndGetHisValue(Document xml) throws TransformerException, IOException {
+        String xmlString = this.convertDocumentToString(xml);
+        JsonNode xmlNode = this.convertStringXmlToJsonNode(xmlString);
+        return xmlNode.path("cteProc").path("CTe").path("infCte").path("ide").path("dhEmi").asText();
+    }
+
+    private String convertDateToTimestamp(String date) {
+        // converter a data recebida em timestamp e retorna-la como string
+        return "";
+    }
+
+    private Element createOrUpdateNode(Document xml, String nomeTagCriada, String valorTagCriada) {
+        Element newNode = xml.createElement(nomeTagCriada);
+        newNode.appendChild(xml.createTextNode(valorTagCriada));
+        return newNode;
     }
 
 }
