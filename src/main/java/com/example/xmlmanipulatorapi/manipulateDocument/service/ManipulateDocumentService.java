@@ -3,6 +3,7 @@ package com.example.xmlmanipulatorapi.manipulateDocument.service;
 import com.example.xmlmanipulatorapi.commons.exceptions.ObjectNotFoundException;
 import com.example.xmlmanipulatorapi.document.model.DocumentXml;
 import com.example.xmlmanipulatorapi.document.model.DocumentXmlDTO;
+import com.example.xmlmanipulatorapi.document.repository.DocumentRepository;
 import com.example.xmlmanipulatorapi.manipulateDocument.configuration.property.MongoClientProperty;
 import com.example.xmlmanipulatorapi.manipulateDocument.configuration.property.TagDestinatarioProperty;
 import com.example.xmlmanipulatorapi.manipulateDocument.entity.ManipulateDocument;
@@ -53,16 +54,19 @@ import java.util.stream.Collectors;
 public class ManipulateDocumentService {
 
     private final ManipulateDocumentRepository manipulateDocumentRepository;
+    private final DocumentRepository documentRepository;
     private final TagDestinatarioProperty tagDestinatarioProperty;
     private final MongoClientProperty mongoClientProperty;
 
     @Autowired
     public ManipulateDocumentService(
             ManipulateDocumentRepository manipulateDocumentRepository,
+            DocumentRepository documentRepository,
             TagDestinatarioProperty tagDestinatarioProperty,
             MongoClientProperty mongoClientProperty
     ) {
         this.manipulateDocumentRepository = manipulateDocumentRepository;
+        this.documentRepository = documentRepository;
         this.tagDestinatarioProperty = tagDestinatarioProperty;
         this.mongoClientProperty = mongoClientProperty;
     }
@@ -183,16 +187,19 @@ public class ManipulateDocumentService {
         } else {
             editedDocument = new ManipulateDocument(newJsonDocument);
             this.manipulateDocumentRepository.insert(editedDocument);
+
+            MongoTemplate mongoTemplate = this.buildMongoTemplate();
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").is(documentId));
+
+            mongoTemplate.remove(query, this.mongoClientProperty.getDatabaseName());
         }
 
         return this.convertStringJsonToStringXml(newJsonDocument);
     }
 
     private String findDocumentById(String documentId, Boolean isEdited) throws IOException {
-        MongoTemplate mongoTemplate = new MongoTemplate(new MongoClient(
-                this.mongoClientProperty.getHost()),
-                this.mongoClientProperty.getDatabaseName()
-        );
+        MongoTemplate mongoTemplate = this.buildMongoTemplate();
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(documentId));
 
@@ -304,7 +311,7 @@ public class ManipulateDocumentService {
         String cidadeEstadoRemetente = rem.path("enderReme").path("xMun").asText() + " - " + rem.path("enderReme").path("UF").asText();
 
         JsonNode dest = infCte.path("dest");
-        String cidadeEstadoDestinatario = dest.path("enderReme").path("xMun").asText() + " - " + dest.path("enderReme").path("UF").asText();
+        String cidadeEstadoDestinatario = dest.path("enderDest").path("xMun").asText() + " - " + dest.path("enderDest").path("UF").asText();
 
         documentXmlDTO.setId(node.path("id").asText());
         documentXmlDTO.setCnpjEmissor(emit.path("CNPJ").asText());
@@ -387,6 +394,13 @@ public class ManipulateDocumentService {
         Element newNode = xml.createElement(nomeTagCriada);
         newNode.appendChild(xml.createTextNode(valorTagCriada));
         return newNode;
+    }
+
+    private MongoTemplate buildMongoTemplate() {
+        return new MongoTemplate(new MongoClient(
+                this.mongoClientProperty.getHost()),
+                this.mongoClientProperty.getDatabaseName()
+        );
     }
 
 }
