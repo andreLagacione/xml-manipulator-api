@@ -32,4 +32,9 @@ public class DocumentResource {
         return this.documentService.getDocumentos();
     }
 
+    @DeleteMapping
+    public void deleteDocument(@RequestParam("id") String id) {
+        this.documentService.deleteDocument(id);
+    }
+
 }

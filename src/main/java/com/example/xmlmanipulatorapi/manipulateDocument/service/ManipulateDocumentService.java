@@ -208,6 +208,7 @@ public class ManipulateDocumentService {
             return document == null ? null : document.getEditedDocument();
         } else {
             DocumentXml document = mongoTemplate.findOne(query, DocumentXml.class);
+            mongoTemplate.remove(document);
             ObjectMapper mapper = new ObjectMapper();
             return document == null ? null : mapper.writeValueAsString(document);
         }

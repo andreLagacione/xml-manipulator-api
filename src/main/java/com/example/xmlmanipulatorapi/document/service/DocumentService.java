@@ -29,7 +29,7 @@ public class DocumentService {
 
     public String readFile(MultipartFile file) throws Exception {
 
-        if (file.isEmpty()) {
+        if (file == null || file.isEmpty()) {
             throw new ObjectNotFoundException("Selecione um arquivo para enviar!");
         }
 
@@ -79,5 +79,10 @@ public class DocumentService {
         documentXmlDTO.setEdited(false);
         return documentXmlDTO;
     }
+
+    public void deleteDocument(String id) {
+//        this.documentRepository.findById(id);
+    }
+
 
 }
