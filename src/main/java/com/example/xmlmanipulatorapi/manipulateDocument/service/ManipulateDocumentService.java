@@ -1,10 +1,11 @@
 package com.example.xmlmanipulatorapi.manipulateDocument.service;
 
 import com.example.xmlmanipulatorapi.commons.exceptions.ObjectNotFoundException;
+import com.example.xmlmanipulatorapi.commons.query.BuildQuery;
+import com.example.xmlmanipulatorapi.commons.template.BuildMongoTemplate;
 import com.example.xmlmanipulatorapi.document.model.DocumentXml;
 import com.example.xmlmanipulatorapi.document.model.DocumentXmlDTO;
 import com.example.xmlmanipulatorapi.document.repository.DocumentRepository;
-import com.example.xmlmanipulatorapi.manipulateDocument.configuration.property.MongoClientProperty;
 import com.example.xmlmanipulatorapi.manipulateDocument.configuration.property.TagDestinatarioProperty;
 import com.example.xmlmanipulatorapi.manipulateDocument.entity.ManipulateDocument;
 import com.example.xmlmanipulatorapi.manipulateDocument.model.CustomTagNameModel;
@@ -17,12 +18,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.mongodb.MongoClient;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,19 +55,22 @@ public class ManipulateDocumentService {
     private final ManipulateDocumentRepository manipulateDocumentRepository;
     private final DocumentRepository documentRepository;
     private final TagDestinatarioProperty tagDestinatarioProperty;
-    private final MongoClientProperty mongoClientProperty;
+    private final BuildMongoTemplate buildMongoTemplate;
+    private final BuildQuery buildQuery;
 
     @Autowired
     public ManipulateDocumentService(
             ManipulateDocumentRepository manipulateDocumentRepository,
             DocumentRepository documentRepository,
             TagDestinatarioProperty tagDestinatarioProperty,
-            MongoClientProperty mongoClientProperty
+            BuildMongoTemplate buildMongoTemplate,
+            BuildQuery buildQuery
     ) {
         this.manipulateDocumentRepository = manipulateDocumentRepository;
         this.documentRepository = documentRepository;
         this.tagDestinatarioProperty = tagDestinatarioProperty;
-        this.mongoClientProperty = mongoClientProperty;
+        this.buildMongoTemplate = buildMongoTemplate;
+        this.buildQuery = buildQuery;
     }
 
     public String processarDocumento(MultipartFile file, String nomeTagCriada, String valorTagCriada) throws Exception {
@@ -187,27 +189,25 @@ public class ManipulateDocumentService {
         } else {
             editedDocument = new ManipulateDocument(newJsonDocument);
             this.manipulateDocumentRepository.insert(editedDocument);
-
-            MongoTemplate mongoTemplate = this.buildMongoTemplate();
-            Query query = new Query();
-            query.addCriteria(Criteria.where("_id").is(documentId));
-
-            mongoTemplate.remove(query, this.mongoClientProperty.getDatabaseName());
         }
 
         return this.convertStringJsonToStringXml(newJsonDocument);
     }
 
     private String findDocumentById(String documentId, Boolean isEdited) throws IOException {
-        MongoTemplate mongoTemplate = this.buildMongoTemplate();
-        Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(documentId));
+        MongoTemplate mongoTemplate = this.buildMongoTemplate.build();
+        Query query = this.buildQuery.findById(documentId);
 
         if (isEdited) {
             ManipulateDocument document = mongoTemplate.findOne(query, ManipulateDocument.class);
             return document == null ? null : document.getEditedDocument();
         } else {
             DocumentXml document = mongoTemplate.findOne(query, DocumentXml.class);
+
+            if (document == null) {
+                throw new ObjectNotFoundException("Documento não encontrado");
+            }
+
             mongoTemplate.remove(document);
             ObjectMapper mapper = new ObjectMapper();
             return document == null ? null : mapper.writeValueAsString(document);
@@ -395,13 +395,6 @@ public class ManipulateDocumentService {
         Element newNode = xml.createElement(nomeTagCriada);
         newNode.appendChild(xml.createTextNode(valorTagCriada));
         return newNode;
-    }
-
-    private MongoTemplate buildMongoTemplate() {
-        return new MongoTemplate(new MongoClient(
-                this.mongoClientProperty.getHost()),
-                this.mongoClientProperty.getDatabaseName()
-        );
     }
 
 }
