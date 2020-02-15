@@ -1,12 +1,16 @@
 package com.example.xmlmanipulatorapi.document.service;
 
 import com.example.xmlmanipulatorapi.commons.exceptions.ObjectNotFoundException;
+import com.example.xmlmanipulatorapi.commons.query.BuildQuery;
+import com.example.xmlmanipulatorapi.commons.template.BuildMongoTemplate;
 import com.example.xmlmanipulatorapi.document.model.*;
 import com.example.xmlmanipulatorapi.document.repository.DocumentRepository;
 import com.example.xmlmanipulatorapi.manipulateDocument.service.ManipulateDocumentService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,11 +24,20 @@ public class DocumentService {
 
     private final DocumentRepository documentRepository;
     private final ManipulateDocumentService manipulateDocumentService;
+    private final BuildMongoTemplate buildMongoTemplate;
+    private final BuildQuery buildQuery;
 
     @Autowired
-    public DocumentService(DocumentRepository documentRepository, ManipulateDocumentService manipulateDocumentService) {
+    public DocumentService(
+            DocumentRepository documentRepository,
+            ManipulateDocumentService manipulateDocumentService,
+            BuildMongoTemplate buildMongoTemplate,
+            BuildQuery buildQuery
+    ) {
         this.documentRepository = documentRepository;
         this.manipulateDocumentService = manipulateDocumentService;
+        this.buildMongoTemplate = buildMongoTemplate;
+        this.buildQuery = buildQuery;
     }
 
     public String readFile(MultipartFile file) throws Exception {
@@ -80,8 +93,16 @@ public class DocumentService {
         return documentXmlDTO;
     }
 
-    public void deleteDocument(String id) {
-//        this.documentRepository.findById(id);
+    public void deleteDocument(String documentId) {
+        MongoTemplate mongoTemplate = this.buildMongoTemplate.build();
+        Query query = this.buildQuery.findById(documentId);
+        DocumentXml document = mongoTemplate.findOne(query, DocumentXml.class);
+
+        if (document == null) {
+            throw new ObjectNotFoundException("Documento não encontrado");
+        }
+
+        mongoTemplate.remove(document);
     }
 
 
