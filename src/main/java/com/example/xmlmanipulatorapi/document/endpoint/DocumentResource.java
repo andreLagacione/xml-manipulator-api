@@ -32,9 +32,10 @@ public class DocumentResource {
         return this.documentService.getDocumentos();
     }
 
-    @DeleteMapping
-    public void deleteDocument(@RequestParam("id") String id) {
+    @DeleteMapping(value = "/{id}")
+    public PadraoMensagemRetornoDTO deleteDocument(@PathVariable String id) {
         this.documentService.deleteDocument(id);
+        return new PadraoMensagemRetornoDTO(HttpStatus.OK, HttpStatus.valueOf("OK").value(), "Documento com sucesso!", "");
     }
 
 }
