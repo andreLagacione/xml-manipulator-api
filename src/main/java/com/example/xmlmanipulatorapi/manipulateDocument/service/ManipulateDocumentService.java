@@ -397,4 +397,16 @@ public class ManipulateDocumentService {
         return newNode;
     }
 
+    public void deleteDocument(String documentId) {
+        MongoTemplate mongoTemplate = this.buildMongoTemplate.build();
+        Query query = this.buildQuery.findById(documentId);
+        ManipulateDocument document = mongoTemplate.findOne(query, ManipulateDocument.class);
+
+        if (document == null) {
+            throw new ObjectNotFoundException("Documento não encontrado");
+        }
+
+        mongoTemplate.remove(document);
+    }
+
 }
