@@ -58,4 +58,10 @@ public class ManipulateDocumentResource {
         return this.manipulateDocumentService.findDocumentByIdAndGetTagName(id);
     }
 
+    @DeleteMapping(value = "/{id}")
+    public PadraoMensagemRetornoDTO deleteDocument(@PathVariable String id) {
+        this.manipulateDocumentService.deleteDocument(id);
+        return new PadraoMensagemRetornoDTO(HttpStatus.OK, HttpStatus.valueOf("OK").value(), "Documento removido com sucesso!", "");
+    }
+
 }
