@@ -3,6 +3,7 @@ package com.example.xmlmanipulatorapi.manipulateDocument.endpoint;
 import com.example.xmlmanipulatorapi.commons.models.PadraoMensagemRetornoDTO;
 import com.example.xmlmanipulatorapi.document.model.DocumentXmlDTO;
 import com.example.xmlmanipulatorapi.manipulateDocument.model.CustomTagNameModel;
+import com.example.xmlmanipulatorapi.manipulateDocument.model.EditDocumentModel;
 import com.example.xmlmanipulatorapi.manipulateDocument.service.ManipulateDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,13 +38,9 @@ public class ManipulateDocumentResource {
     @PostMapping
     @RequestMapping(value = "/edit")
     public PadraoMensagemRetornoDTO saveDocumentEdited(
-            @RequestParam("documentId") String documentId,
-            @RequestParam("oldTagName") String oldTagName,
-            @RequestParam("newTagName") String newTagName,
-            @RequestParam("tagValue") String tagValue,
-            @RequestParam("isEdited") Boolean isEdited
+            @RequestBody EditDocumentModel editDocumentModel
     ) throws Exception {
-        String content = this.manipulateDocumentService.saveDocumentEdited(documentId, oldTagName, newTagName, tagValue, isEdited);
+        String content = this.manipulateDocumentService.saveDocumentEdited(editDocumentModel);
         return new PadraoMensagemRetornoDTO(HttpStatus.OK, HttpStatus.valueOf("OK").value(), "Arquivo editado com sucesso!", content);
     }
 

@@ -9,6 +9,7 @@ import com.example.xmlmanipulatorapi.document.repository.DocumentRepository;
 import com.example.xmlmanipulatorapi.manipulateDocument.configuration.property.TagDestinatarioProperty;
 import com.example.xmlmanipulatorapi.manipulateDocument.entity.ManipulateDocument;
 import com.example.xmlmanipulatorapi.manipulateDocument.model.CustomTagNameModel;
+import com.example.xmlmanipulatorapi.manipulateDocument.model.EditDocumentModel;
 import com.example.xmlmanipulatorapi.manipulateDocument.repository.ManipulateDocumentRepository;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -159,7 +160,12 @@ public class ManipulateDocumentService {
         return node;
     }
 
-    public String saveDocumentEdited(String documentId, String oldTagName, String newTagName, String tagValue, Boolean isEdited) throws Exception {
+    public String saveDocumentEdited(EditDocumentModel editDocumentModel) throws Exception {
+        String documentId = editDocumentModel.getDocumentId();
+        String oldTagName = editDocumentModel.getOldTagName();
+        String newTagName = editDocumentModel.getNewTagName();
+        String tagValue = editDocumentModel.getTagValue();
+        Boolean isEdited = editDocumentModel.getIsEdited();
         String xmlDocument = this.findDocumentById(documentId, isEdited);
 
         if (xmlDocument == null) {
